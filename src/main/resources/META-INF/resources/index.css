@@ -1,3 +1,5 @@
+/** Should be moved down to local level and populurized with variables defined in global css.**/
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;

@@ -1,22 +1,74 @@
 package io.hulsbo;
 
+import io.hulsbo.model.Adventure;
+import io.hulsbo.model.Manager;
 import io.hulsbo.util.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.util.List;
+import java.util.UUID;
 
-
-@Path("/adventure")
+@Path("/adventures")
 public class AdventureResource {
 
-    @Inject
-    KCalCalculationStrategy kCalCalculationStrategy;
+	@Inject
+	KCalCalculationStrategy kCalCalculationStrategy;
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return kCalCalculationStrategy.toString();
-    }
+	@Inject
+	@Location("prov-list-inner-adventures.html")
+	Template adventureList;
+
+	@POST
+	@Produces(MediaType.TEXT_HTML)
+	public Response createAdventure() {
+		Adventure adventure = new Adventure(kCalCalculationStrategy);
+		UUID adventureId = adventure.getId();
+
+		// Return HTML snippet with the new adventure ID
+		String htmlResponse = "<div id='adventure-created'>Adventure created with ID: " + adventureId + "</div>";
+		return Response.ok(htmlResponse).build();
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public TemplateInstance browseAdventures() {
+		List<Adventure> adventures = Manager.getAllAdventures();
+		return adventureList.data("adventures", adventures);
+	}
+
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getAdventure(@PathParam("id") String id) {
+		try {
+			UUID adventureId = UUID.fromString(id);
+			Adventure adventure = (Adventure) Manager.getObject(adventureId);
+
+			if (adventure == null) {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("<div class='error'>Adventure not found</div>")
+						.build();
+			}
+
+			String htmlResponse = "<div class='adventure-item' data-id='" + adventure.getId() + "'>" +
+					"<span class='adventure-name'>" + adventure.getName() + "</span>" +
+					"<span class='adventure-days'>" + adventure.getDays() + " days</span>" +
+					"<span class='adventure-crew'>" + adventure.getCrewSize() + " crew members</span>" +
+					"<span class='adventure-kcal'>" + adventure.getCrewDailyKcalNeed()
+					+ " total kCal need per day</span>" +
+					"</div>";
+
+			return Response.ok(htmlResponse).build();
+		} catch (IllegalArgumentException e) {
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity("<div class='error'>Invalid adventure ID</div>")
+					.build();
+		}
+	}
+
 }

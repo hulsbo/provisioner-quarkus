@@ -188,4 +188,15 @@ public class Adventure extends BaseClass{
         System.out.println("END OF SUMMARY");
     }
 
+    public int getCrewSize() {
+        return crew.size();
+    }
+
+    public double getCrewDailyKcalNeed() {
+        return crewDailyKcalNeed;
+    }
+
+    public double getEnergyDensity() {
+        return energyDensity;
+    }
 }

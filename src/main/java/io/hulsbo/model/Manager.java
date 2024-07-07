@@ -3,6 +3,7 @@ package io.hulsbo.model;
 import io.hulsbo.util.baseclass.ChildWrapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Manager {
     static final Map<UUID, BaseClass> index = new HashMap<>();
@@ -31,5 +32,14 @@ public class Manager {
     public static void removeObject(UUID id) {
         index.remove(id);
     }
+
+    public static List<Adventure> getAllAdventures() {
+        return index.values().stream()
+                .filter(obj -> obj instanceof Adventure)
+                .map(obj -> (Adventure) obj)
+                .collect(Collectors.toList());
+    }
+
+
 }
 
