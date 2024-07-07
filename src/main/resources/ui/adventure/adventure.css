@@ -20,7 +20,6 @@ body {
     font-size: 1.5em;
 }
 
-/* TODO: container is not aligned with grid items at screen heights less than 750px */
 .container {
     padding: 10px 20px;
     border-radius: 5px;
