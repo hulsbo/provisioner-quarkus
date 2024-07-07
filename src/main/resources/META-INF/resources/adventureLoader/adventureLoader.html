@@ -3,10 +3,11 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Title</title>
-
+	<title>Adventure Loader</title>
 	<link rel="stylesheet" href="adventureLoader.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js"></script>
 </head>
+<body>
 <div id="load-screen" class="load-screen">
 	<div class="load-screen-content">
 		<div class="column-left">
@@ -16,11 +17,16 @@
 			<button id="create-meal-btn">CREATE MEAL</button>
 		</div>
 		<div class="column-right">
-			<button id="create-adventure-btn">CREATE ADVENTURE</button>
+			<button id="create-adventure-btn"
+					hx-post="/adventure"
+					hx-target="#adventure-result"
+					hx-swap="innerHTML">
+				CREATE ADVENTURE
+			</button>
+			<div id="adventure-result"></div>
 			<div class="existing-adventures">
 				<h2>Load existing Adventure</h2>
-				<div id="adventure-list" hx-get=>
-
+				<div id="adventure-list" hx-get="/adventure/browse" hx-trigger="load">
 					<!-- More adventures will be dynamically added here -->
 				</div>
 				<button id="load-adventure-btn">LOAD</button>
@@ -28,5 +34,5 @@
 		</div>
 	</div>
 </div>
-
+</body>
 </html>
