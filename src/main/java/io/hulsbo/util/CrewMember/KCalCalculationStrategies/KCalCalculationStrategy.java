@@ -1,7 +1,7 @@
 package io.hulsbo.util.CrewMember.KCalCalculationStrategies;
+
 import io.hulsbo.util.CrewMember.Gender;
 import io.hulsbo.util.CrewMember.PhysicalActivity;
-
 
 public interface KCalCalculationStrategy {
     double determineBMR(int age, double height, double weight, Gender gender);
