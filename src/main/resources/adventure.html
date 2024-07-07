@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Planner</title>
+    <link rel="stylesheet" href="adventure.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js"></script>
+    <script src="js-scripts/focus-on-click.js"></script>
+    <script src="js-scripts/ratio-sum-calculator.js"></script>
+</head>
+<body>
+<header class="page-banner">
+    <h1>PROVISIONER</h1>
+</header>
+
+<div class="container">
+    <h1>ADVENTURE<input type="text" id="adventure-name" placeholder="Enter adventure name" autocomplete="off"
+                        hx-put="/api/adventure/name"
+                        hx-trigger="blur, keyup[key=='Enter']"
+                        hx-target="#adventure-info"></h1>
+    <main class="grid">
+        <section>
+            <div class="section-banner">
+                <h2>INPUT</h2>
+            </div>
+            <div class="section-content adventure-details">
+                <label for="adventure-days">DAYS</label>
+                <input type="number" id="adventure-days">
+
+                <label for="crew-list">CREW</label>
+                <div id="crew-list" class="table-area" hx-get="/api/crew" hx-trigger="load">
+                    <!-- Crew members will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+            <section>
+                <div class="section-banner">
+                    <h2>MEALS</h2>
+                </div>
+                <div class="section-content">
+                    <div id="meals-list" class="table-area" hx-get="/api/meals" hx-trigger="load">
+                        <div class="table-header">
+                            <div class="table-label">Name</div>
+                            <div class="table-label">Ratio</div>
+                        </div>
+                        <div class="table-item focusable">
+                            <div class="table-entry name">Burger</div>
+                            <div class="table-entry ratio"><span class="value">25</span><span class="unit">%</span></div>
+                        </div>
+                        <div class="table-item focusable">
+                            <div class="table-entry name">Burger</div>
+                            <div class="table-entry ratio"><span class="value">25</span><span class="unit">%</span></div>
+                        </div>
+                        <div class="table-item focusable">
+                            <div class="table-entry name">Burger</div>
+                            <div class="table-entry ratio"><span class="value">25</span><span class="unit">%</span></div>
+                        </div>
+                        <div class="table-item focusable">
+                            <div class="table-entry name">Burger</div>
+                            <div class="table-entry ratio"><span class="value">25</span><span class="unit">%</span></div>
+                        </div>
+                    </div>
+                    <div class="table-actionbar focusable">
+                        <div class="table-entry total">Total</div>
+                        <div class="table-entry ratio-sum"><span class="value"></span><span class="unit">%</span></div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="section-banner">
+                    <h2>ADVENTURE INFO</h2>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <label for="adventure-info-general">GENERAL</label>
+                        <div id="adventure-info-general" class="info-area" hx-get="/api/adventure/info/general" hx-trigger="load">
+                            <!-- Adventure general info will be loaded here -->
+                        </div>
+                    </div>
+                    <div>
+                        <label for="adventure-info-nutrient">NUTRIENT DATA</label>
+                        <div id="adventure-info-nutrient" class="nutrient-area" hx-get="/api/adventure/info/nutrient" hx-trigger="load">
+                            <!-- Adventure nutrient info will be loaded here -->
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Carbs</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Protein</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Fat</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Fiber</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Water</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Salt</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="section-banner">
+                    <h2>SELECTED MEAL INFO</h2>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <label for="meal-info-general">GENERAL</label>
+                        <div id="meal-info-general" class="info-area" hx-get="/api/meal/info/general" hx-trigger="load">
+                            <!-- Meal general info will be loaded here -->
+                        </div>
+                    </div>
+                    <div>
+                        <label for="meal-info-nutrient">NUTRIENT DATA</label>
+                        <div id="meal-info-nutrient" class="nutrient-area" hx-get="/api/meal/info/nutrient" hx-trigger="load">
+                            <!-- Meal nutrient info will be loaded here -->
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Carbs</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Protein</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Fat</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Fiber</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Water</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-label">Salt</div>
+                                <div class="nutrient-value"><span class="value">25</span><span class="unit">%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
