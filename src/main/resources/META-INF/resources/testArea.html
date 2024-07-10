@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link href="index.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js">
+	</script>
+	<script src="../../js/makeFocusableOnClick.js"> </script>
+</head>
+
+<body>
+	<div hx-get="/adventures" hx-trigger="load"></div>
+	<button id="create-adventure-btn" hx-get="/adventures/modal" hx-target="#adventure-result">
+		OPEN MODAL
+	</button>
+
+	<div id="adventure-result"></div>
+</body>
+
+
+</html>
