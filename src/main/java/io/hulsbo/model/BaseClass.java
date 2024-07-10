@@ -49,8 +49,18 @@ public abstract class BaseClass {
         return this.energyDensity;
     }
 
-    protected NutrientsMap getNutrientsMap() {
+
+    public NutrientsMap getNutrientsMap() {
         return nutrientsMap;
+    }
+
+    // NOTE: made public for qute template
+    public String getFormattedNutrientsMap(String nutrient) {
+        Double value = getNutrientsMap().get(nutrient);
+        if (value == null) {
+            return "N/A";
+        }
+        return String.format("%.1f%%", value * 100);
     }
 
 

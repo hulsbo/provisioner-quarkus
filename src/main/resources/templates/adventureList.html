@@ -96,7 +96,10 @@
 			<span id="adventure-list-header-action"></span>
 		</div>
 		{#for adventure in adventures}
-		<div id="{adventure.id}" class="adventure-list-item" tabindex="0">
+		<div class="adventure-list-item" tabindex="0"
+			 hx-get="/adventures/{adventure.id}/info"
+			 hx-trigger="click[js:\{querySelector('.adventure-preview') !== null\}]"
+			 hx-target=".adventure-preview">
 			<span class="adventure-list-item-name">{adventure.name}</span>
 			<span class="adventure-list-item-days">{adventure.days} days</span>
 			<button class="adventure-list-delete-btn" hx-delete="/adventures/{adventure.id}" hx-target="#id-{uniqueId}"

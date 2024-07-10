@@ -51,19 +51,22 @@
 		}
 
 		.adventure-list-column {
-			height: 300px;
+			height: 600px;
 			min-width: 300px;
 			overflow-y: auto;
 		}
 
 		.adventure-preview-column {
 			flex: 1;
+			height 300px;
+			overflow-y: auto;
 		}
 
 		.adventure-preview {
 			border-left: 1px solid #ccc;
 			height: 100%;
 			margin-left: auto;
+			padding-left: 10px;
 		}
 
 		.adventure-modal-footer {
@@ -107,7 +110,7 @@
 				<!-- Adventure list will be populated here -->
 			</div>
 			<div class="adventure-preview-column">
-				<div class="adventure-preview" hx-get="/adventures/preview" hx-trigger="click">
+				<div class="adventure-preview">
 					<!-- Adventure preview will be populated here -->
 				</div>
 			</div>

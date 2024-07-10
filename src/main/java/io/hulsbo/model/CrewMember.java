@@ -32,6 +32,12 @@ public class CrewMember {
         return kCalCalculationStrategy.determineKCal(BMR, activity);
     }
 
+    // NOTE: used in template 
+    public int getDailyKCalNeed(boolean asInt) {
+        double BMR = kCalCalculationStrategy.determineBMR(age, height, weight, gender);
+        return (int) kCalCalculationStrategy.determineKCal(BMR, activity);
+    }
+
     public String getName() {
         return name;
     }

@@ -2,7 +2,10 @@ package io.hulsbo;
 
 import io.hulsbo.model.Adventure;
 import io.hulsbo.model.Manager;
+import io.hulsbo.util.CrewMember.Gender;
+import io.hulsbo.util.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
 import io.hulsbo.util.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
+import io.hulsbo.util.CrewMember.PhysicalActivity;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -22,7 +25,11 @@ public class AdventureResource {
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	public Response createAdventure() {
-		new Adventure(kCalCalculationStrategy);
+		Adventure test = new Adventure(kCalCalculationStrategy);
+
+
+		test.addCrewMember("Oskar", 29,Math.random()*100, 75,
+				Gender.MALE, PhysicalActivity.MODERATE , new HarrisBenedictOriginal());
 
 		return browseAdventures();
 	}
@@ -70,14 +77,24 @@ public class AdventureResource {
 		return Response.ok(renderedHtml).build();
 	}
 
+	@Inject
+	@Location("adventureInfo.html")
+	Template adventureInfoTemplate;
+
 	@GET
-	@Path("/modal/preview")
+	@Path("/{id}/info")
 	@Produces(MediaType.TEXT_HTML)
-	public Response returnPreview() {
-		String renderedHtml = adventureModal.render();
-		System.out.println(renderedHtml);
-		return Response.ok().build();
+	public Response getAdventureInfo(@PathParam("id") UUID id) {
+		Adventure adventure = (Adventure) Manager.getObject(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
+		return Response.ok(renderedHtml).build();
 	}
+
+
+
 
 	@GET
 	@Path("/{id}")

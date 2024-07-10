@@ -187,16 +187,36 @@ public class Adventure extends BaseClass{
         System.out.println();
         System.out.println("END OF SUMMARY");
     }
-
+    // NOTE: Used in template.
     public int getCrewSize() {
         return crew.size();
     }
-
-    public double getCrewDailyKcalNeed() {
-        return crewDailyKcalNeed;
+    // NOTE: Used in template.
+    public List<CrewMember> getCrew() {
+        return this.crew;
     }
 
-    public double getEnergyDensity() {
-        return energyDensity;
+    // NOTE: Used in template.
+    public int getCrewDailyKcalNeed() {
+        return (int) crewDailyKcalNeed;
     }
+
+    // NOTE: Used in template.
+    public Map<UUID, ChildWrapper> getChildMap() {
+        return childMap;
+    }
+    // NOTE: Used in template.
+    public String getFormattedEnergyDensity() {
+        return String.format("%.1f%%", energyDensity);
+    }
+
+    // NOTE: Used in template.
+    public String getFormattedTotalRatio() {
+        double ratio = childMap.values().stream()
+                .mapToDouble(ChildWrapper::getRatio)
+                .sum();
+        return String.format("%.1f", ratio * 100);
+    }
+
+
 }
