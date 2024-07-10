@@ -111,7 +111,7 @@ public class Adventure extends BaseClass{
         this.days = days;
     }
 
-    public double getDays() {
+    public int getDays() {
         return days;
     }
 
