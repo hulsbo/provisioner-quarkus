@@ -19,26 +19,64 @@ public class AdventureResource {
 	@Inject
 	KCalCalculationStrategy kCalCalculationStrategy;
 
-	@Inject
-	@Location("prov-list-inner-adventures.html")
-	Template adventureList;
-
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	public Response createAdventure() {
-		Adventure adventure = new Adventure(kCalCalculationStrategy);
-		UUID adventureId = adventure.getId();
+		new Adventure(kCalCalculationStrategy);
 
-		// Return HTML snippet with the new adventure ID
-		String htmlResponse = "<div id='adventure-created'>Adventure created with ID: " + adventureId + "</div>";
-		return Response.ok(htmlResponse).build();
+		return browseAdventures();
 	}
+
+	@Inject
+	@Location("adventureList.html")
+	Template adventureList;
 
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public TemplateInstance browseAdventures() {
-		List<Adventure> adventures = Manager.getAllAdventures();
-		return adventureList.data("adventures", adventures);
+	public Response browseAdventures() {
+		try {
+			List<Adventure> adventures = Manager.getAllAdventures();
+
+			System.out.println(adventures);
+
+			String uniqueId = UUID.randomUUID().toString();
+			String renderedHtml = adventureList.data("adventures", adventures, "uniqueId", uniqueId).render();
+
+			return Response
+					.ok(renderedHtml)
+					.build();
+		} catch (Exception e) {
+			// Log the exception
+			e.printStackTrace();
+
+			// Return an error response
+			return Response
+					.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity("<p>An error occurred while fetching adventures.</p>")
+					.build();
+		}
+	}
+
+	@Inject
+	@Location("adventureModal.html")
+	Template adventureModal;
+
+	@GET
+	@Path("/modal")
+	@Produces(MediaType.TEXT_HTML)
+	public Response returnModal() {
+		String renderedHtml = adventureModal.render();
+		System.out.println(renderedHtml);
+		return Response.ok(renderedHtml).build();
+	}
+
+	@GET
+	@Path("/modal/preview")
+	@Produces(MediaType.TEXT_HTML)
+	public Response returnPreview() {
+		String renderedHtml = adventureModal.render();
+		System.out.println(renderedHtml);
+		return Response.ok().build();
 	}
 
 	@GET
@@ -69,6 +107,16 @@ public class AdventureResource {
 					.entity("<div class='error'>Invalid adventure ID</div>")
 					.build();
 		}
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public Response deleteAdventure(@PathParam("id") UUID id) {
+		// Implement deletion logic here
+		Manager.removeObject(id);
+		// Use the existing browseAdventures method to fetch the updated list
+		return browseAdventures();
 	}
 
 }
