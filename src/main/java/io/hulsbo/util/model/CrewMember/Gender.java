@@ -1,4 +1,4 @@
-package io.hulsbo.util.CrewMember;
+package io.hulsbo.util.model.CrewMember;
 
 public enum Gender {
     MALE,

@@ -1,8 +1,10 @@
-package io.hulsbo.util.CrewMember.KCalCalculationStrategies;
+package io.hulsbo.util.model.CrewMember.KCalCalculationStrategies;
 
-import io.hulsbo.util.CrewMember.Gender;
+import jakarta.enterprise.context.ApplicationScoped;
+import io.hulsbo.util.model.CrewMember.Gender;
 
-public class HarrisBenedictRevised implements KCalCalculationStrategy {
+@ApplicationScoped
+public class HarrisBenedictOriginal implements KCalCalculationStrategy {
 
     /**
      * Source: <a href=
@@ -18,8 +20,10 @@ public class HarrisBenedictRevised implements KCalCalculationStrategy {
     public double determineBMR(int age, double height, double weight, Gender gender) {
         double BMR;
         if (gender == Gender.MALE) {
-            BMR = 13.397 * weight + 4.799 * height - 5.677 * age + 88.362;
-        } else BMR = 9.247 * weight + 3.098 * height - 4.330 * age + 447.593;
+            BMR = 13.7516 * weight + 5.0033 * height - 6.755 * age + 66.473;
+        } else BMR = 9.5634 * weight + 1.8496 * height - 4.6756 * age + 655.0955;
+
         return BMR;
     }
+
 }

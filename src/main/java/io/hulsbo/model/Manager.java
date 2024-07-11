@@ -1,6 +1,6 @@
 package io.hulsbo.model;
 
-import io.hulsbo.util.baseclass.ChildWrapper;
+import io.hulsbo.util.model.baseclass.ChildWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;

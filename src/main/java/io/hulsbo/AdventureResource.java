@@ -2,19 +2,20 @@ package io.hulsbo;
 
 import io.hulsbo.model.Adventure;
 import io.hulsbo.model.Manager;
-import io.hulsbo.util.CrewMember.Gender;
-import io.hulsbo.util.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
-import io.hulsbo.util.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
-import io.hulsbo.util.CrewMember.PhysicalActivity;
+import io.hulsbo.util.model.CrewMember.Gender;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
+import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
+
+import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
 @Path("/adventures")
 public class AdventureResource {
@@ -28,8 +29,11 @@ public class AdventureResource {
 		Adventure test = new Adventure(kCalCalculationStrategy);
 
 
-		test.addCrewMember("Oskar", 29,Math.random()*100, 75,
+		test.addCrewMember("Oskar", 29,170 + Math.random()*10, 75,
 				Gender.MALE, PhysicalActivity.MODERATE , new HarrisBenedictOriginal());
+		test.addCrewMember("Lovisa", 31,160 + Math.random()*10, 75,
+				Gender.FEMALE, PhysicalActivity.VERY_HEAVY , new HarrisBenedictOriginal());
+		test.setDays((int) (1 + Math.random() * 10));
 
 		return browseAdventures();
 	}
@@ -43,14 +47,11 @@ public class AdventureResource {
 	public Response browseAdventures() {
 		try {
 			List<Adventure> adventures = Manager.getAllAdventures();
-
-			System.out.println(adventures);
-
-			String uniqueId = UUID.randomUUID().toString();
-			String renderedHtml = adventureList.data("adventures", adventures, "uniqueId", uniqueId).render();
+			System.out.println("yesys");
+			String renderedUniqueTemplate = renderUniqueTemplate(adventures);
 
 			return Response
-					.ok(renderedHtml)
+					.ok(renderedUniqueTemplate)
 					.build();
 		} catch (Exception e) {
 			// Log the exception
@@ -62,6 +63,23 @@ public class AdventureResource {
 					.entity("<p>An error occurred while fetching adventures.</p>")
 					.build();
 		}
+	}
+
+	/**
+	 * <p>Renders a HTML template with unique id and class values that includes template filename.</p>
+	 * <p>NOTE: The template should have id placeholders as <pre> {@code __id_p{number}__  }</pre> to be replaced with unique ones.</p>
+	 * <p>Also possible to transfer IDs from parent components sent in the request.</p>
+	 *
+	 * @param adventures the list of adventures to render
+	 * @return the rendered HTML template with unique instance classes and IDs
+	 */
+	private String renderUniqueTemplate(List<Adventure> adventures) {
+		String renderedHtml = adventureList.data("adventures", adventures).render();
+		String renderedHtmlWithClass = addInstanceClassAndIDs(
+				renderedHtml,
+				adventureList.getId().replace(".html", ""
+				));
+		return renderedHtmlWithClass;
 	}
 
 	@Inject

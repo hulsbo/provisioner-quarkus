@@ -1,8 +1,8 @@
 package io.hulsbo.model;
 
-import io.hulsbo.util.CrewMember.Gender;
-import io.hulsbo.util.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
-import io.hulsbo.util.CrewMember.PhysicalActivity;
+import io.hulsbo.util.model.CrewMember.Gender;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
+import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 
 public class CrewMember {
     private final String name;

@@ -1,4 +1,4 @@
-package io.hulsbo.util.CrewMember;
+package io.hulsbo.util.model.CrewMember;
 
 /**
  * <p>The activity factor calculates the  on the basal metabolic rate (BMR).

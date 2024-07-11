@@ -1,6 +1,6 @@
-package io.hulsbo.util.CrewMember.KCalCalculationStrategies;
+package io.hulsbo.util.model.CrewMember.KCalCalculationStrategies;
 
-import io.hulsbo.util.CrewMember.Gender;
+import io.hulsbo.util.model.CrewMember.Gender;
 
 public class MifflinStJeor implements KCalCalculationStrategy {
 

@@ -1,7 +1,7 @@
 package io.hulsbo.model;
 
-import io.hulsbo.util.baseclass.ChildWrapper;
-import io.hulsbo.util.baseclass.NutrientsMap;
+import io.hulsbo.util.model.baseclass.ChildWrapper;
+import io.hulsbo.util.model.baseclass.NutrientsMap;
 
 import java.util.*;
 

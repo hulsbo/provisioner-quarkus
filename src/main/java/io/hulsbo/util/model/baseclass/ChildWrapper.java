@@ -1,4 +1,4 @@
-package io.hulsbo.util.baseclass;
+package io.hulsbo.util.model.baseclass;
 
 import io.hulsbo.model.BaseClass;
 
