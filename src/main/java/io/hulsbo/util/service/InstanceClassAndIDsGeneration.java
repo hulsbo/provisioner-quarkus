@@ -52,14 +52,14 @@ public class InstanceClassAndIDsGeneration {
     }
 
     private static String replaceIdPlaceholders(String htmlInput, String uniqueClass) {
-        Pattern pattern = Pattern.compile("__id_p(\\d+)__");
+        Pattern pattern = Pattern.compile("__iid_([a-zA-Z\\d]+)__");
         Matcher matcher = pattern.matcher(htmlInput);
 
         // NOTE: don't know much about this, but StringBuffer ensures thread-safety whereas StringBuilder does not.
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
-            String uniqueId = uniqueClass + "_" + matcher.group(1);
+            String uniqueId = uniqueClass + "_iid_" + matcher.group(1);
             matcher.appendReplacement(sb, uniqueId);
         }
         matcher.appendTail(sb);
