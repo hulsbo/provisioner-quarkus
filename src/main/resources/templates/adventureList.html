@@ -1,20 +1,19 @@
-<div class="adventure-list-component" id="id-{uniqueId}">
+<div id="__lid_p1__">
 	<style>
-		.adventure-list-component {
+		#__lid_p1__ {
 			display: block;
 			font-family: Arial, sans-serif;
 			margin: 0;
-
 		}
 
-		.adventure-list-component #adventure-list-table {
+		#adventure-list-table {
 			background-color: #ffffff;
 			border: 1px solid #a9c3c7;
 			border-radius: 5px;
 			cursor: pointer;
 		}
 
-		.adventure-list-component #adventure-list-header {
+		#adventure-list-header {
 			display: flex;
 			flex-direction: row;
 			padding: 10px;
@@ -25,20 +24,20 @@
 			font-weight: bold;
 		}
 
-		.adventure-list-component #adventure-list-header-name {
+		#adventure-list-header-name {
 			flex: 1;
 		}
 
-		.adventure-list-component #adventure-list-header-days {
+		#adventure-list-header-days {
 			text-align: center;
 			flex: 0 0 100px;
 		}
 
-		.adventure-list-component #adventure-list-header-action {
+		#adventure-list-header-action {
 			width: 24px;
 		}
 
-		.adventure-list-component .adventure-list-item {
+		.adventure-list-item {
 			display: flex;
 			flex-direction: row;
 			padding: 10px;
@@ -48,25 +47,25 @@
 			transition: background-color 0.1s;
 		}
 
-		.adventure-list-component .adventure-list-item:hover {
+		.adventure-list-item:hover {
 			background-color: #e1e6e7;
 		}
 
-		.adventure-list-component .adventure-list-item:focus {
+		.adventure-list-item:focus {
 			background-color: #a9c3c7;
 			outline: none;
 		}
 
-		.adventure-list-component .adventure-list-item-name {
+		.adventure-list-item-name {
 			flex: 1;
 		}
 
-		.adventure-list-component .adventure-list-item-days {
+		.adventure-list-item-days {
 			flex: 0 0 80px;
 			text-align: center;
 		}
 
-		.adventure-list-component .adventure-list-delete-btn {
+		.adventure-list-delete-btn {
 			width: 24px;
 			height: 24px;
 			border-radius: 50%;
@@ -80,14 +79,15 @@
 			transition: background-color 0.1s;
 		}
 
-		.adventure-list-component .adventure-list-delete-btn svg {
+		.adventure-list-delete-btn svg {
 			width: 24px;
 			height: 24px;
 		}
 
-		.adventure-list-component .adventure-list-delete-btn:hover circle {
+		.adventure-list-delete-btn:hover circle {
 			fill: #f44336;
 		}
+
 	</style>
 	<div id="adventure-list-table">
 		<div id="adventure-list-header">
@@ -96,13 +96,14 @@
 			<span id="adventure-list-header-action"></span>
 		</div>
 		{#for adventure in adventures}
+		<!-- TODO: js: produces "SyntaxError: Unexpected token ':'" -->
 		<div class="adventure-list-item" tabindex="0"
 			 hx-get="/adventures/{adventure.id}/info"
 			 hx-trigger="click[js:\{querySelector('.adventure-preview') !== null\}]"
 			 hx-target=".adventure-preview">
 			<span class="adventure-list-item-name">{adventure.name}</span>
 			<span class="adventure-list-item-days">{adventure.days} days</span>
-			<button class="adventure-list-delete-btn" hx-delete="/adventures/{adventure.id}" hx-target="#id-{uniqueId}"
+			<button class="adventure-list-delete-btn" hx-delete="/adventures/{adventure.id}" hx-target="#__lid_p1__"
 				hx-swap="outerHTML">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 					<circle cx="12" cy="12" r="12" fill="#808080" />

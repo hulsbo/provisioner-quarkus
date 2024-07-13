@@ -47,7 +47,7 @@ public class AdventureResource {
 	public Response browseAdventures() {
 		try {
 			List<Adventure> adventures = Manager.getAllAdventures();
-			System.out.println("yesys");
+
 			String renderedUniqueTemplate = renderUniqueTemplate(adventures);
 
 			return Response
@@ -66,15 +66,30 @@ public class AdventureResource {
 	}
 
 	/**
-	 * <p>Renders a HTML template with unique id and class values that includes template filename.</p>
-	 * <p>NOTE: The template should have id placeholders as <pre> {@code __id_p{number}__  }</pre> to be replaced with unique ones.</p>
-	 * <p>Also possible to transfer IDs from parent components sent in the request.</p>
+	 * <p>
+	 * Renders a HTML template with
+	 *
+	 * <ul>
+	 *     <li>uniqueClass as: <code>componentName_{randomized string}</code></li>
+	 *     <li>unique local ids ("lids") as: <code>"lid_" + matcher.group(1) + "__" + uniqueClass</code>.</li>
+	 * </ul>
+	 * template filename.
+	 * </p>
+	 * <p>
+	 * NOTE: id placeholders in template needs to match the following regex:
+	 * 
+	 * <pre> {@code "__lid_([a-zA-Z\d]+)__" }</pre>
+	 * 
+	 * to be replaced with unique ones.
+	 * </p>
 	 *
 	 * @param adventures the list of adventures to render
 	 * @return the rendered HTML template with unique instance classes and IDs
 	 */
 	private String renderUniqueTemplate(List<Adventure> adventures) {
+
 		String renderedHtml = adventureList.data("adventures", adventures).render();
+
 		String renderedHtmlWithClass = addInstanceClassAndIDs(
 				renderedHtml,
 				adventureList.getId().replace(".html", ""
@@ -110,9 +125,6 @@ public class AdventureResource {
 		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
 		return Response.ok(renderedHtml).build();
 	}
-
-
-
 
 	@GET
 	@Path("/{id}")

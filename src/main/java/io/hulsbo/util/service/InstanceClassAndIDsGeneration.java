@@ -1,9 +1,6 @@
 package io.hulsbo.util.service;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -16,10 +13,8 @@ public class InstanceClassAndIDsGeneration {
     /**
      * Adds unique classes and IDs to HTML elements based on the template file name. <br>
      *
-     * <p>NOTE: In template ID placeholders should have format: <pre>{@code __id_p{number}__}</pre></p>
-     *
      * @param htmlInput HTML content as a string
-     * @param componentName The name of the template file
+     * @param componentName The name of the template file, used to annotate class/id.
      * @return A modified version of the HTML input with unique classes and IDs added to all elements
      *
      * @throws IllegalArgumentException if htmlInput or componentName is null or empty
@@ -35,31 +30,48 @@ public class InstanceClassAndIDsGeneration {
         }
 
         // Generate a unique class prefix
-        String uniqueClassPrefix = generateUniqueClass(componentName);
+        String uniqueClassPrefix = generatePrefixedRandomString(componentName);
+
 
         // Step 1: Generate unique ids for id-placeholders
-        String htmlWithUniqueIds = replaceIdPlaceholders(htmlInput, uniqueClassPrefix);
+        String htmlWithUniqueIds = replaceLidPlaceholders(htmlInput, uniqueClassPrefix);
 
         // Step 2: Process HTML and CSS to insert unique classes
 
         // Add the unique class prefix to HTML elements
         String htmlWithUniqueClasses = insertUniqueClassesToHtml(htmlWithUniqueIds, uniqueClassPrefix);
 
-        // Add the unique class prefix to CSS selectors
+
+        // Add the unique class prefix to CSS selectors TODO: This takes 10-12ms for some reason, perhaps many regex queries. Optimize.
         String finalHtml = insertUniqueClassesToCss(htmlWithUniqueClasses, uniqueClassPrefix);
 
         return finalHtml;
     }
 
-    private static String replaceIdPlaceholders(String htmlInput, String uniqueClass) {
-        Pattern pattern = Pattern.compile("__iid_([a-zA-Z\\d]+)__");
+
+    /**
+     * Replaces local id placeholders ("lids") with an id based on the instance class generated for the template.
+     * @param htmlInput The input HTML string containing placeholders to be replaced.
+     * @param uniqueClass A unique class name to be prefixed to the placeholders.
+     * @return The modified HTML string with all placeholders replaced by the unique identifiers.
+     *
+     * Example:
+     * <pre>
+     * String htmlInput = "<div id='__lid_123__'>Content</div>";
+     * String uniqueClass = "myClass";
+     * String result = replaceLidPlaceholders(htmlInput, uniqueClass);
+     * // result: "<div id='myClass_lid_123'>Content</div>"
+     * </pre>
+     */
+    private static String replaceLidPlaceholders(String htmlInput, String uniqueClass) {
+        Pattern pattern = Pattern.compile("__lid_([a-zA-Z\\d]+)__");
         Matcher matcher = pattern.matcher(htmlInput);
 
         // NOTE: don't know much about this, but StringBuffer ensures thread-safety whereas StringBuilder does not.
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
-            String uniqueId = uniqueClass + "_iid_" + matcher.group(1);
+            String uniqueId = "lid_" + matcher.group(1) + "__" + uniqueClass;
             matcher.appendReplacement(sb, uniqueId);
         }
         matcher.appendTail(sb);
@@ -67,8 +79,20 @@ public class InstanceClassAndIDsGeneration {
         return sb.toString();
     }
 
-    public static String generateUniqueClass(String componentName) {
-        StringBuilder sb = new StringBuilder("id_" + componentName + "_");
+    /**
+     * Generates a random string with a specified prefix followed by a sequence of random characters.
+     *
+     * @param prefix The prefix to be added at the beginning of the random string.
+     * @return The generated random string with the specified prefix. <br> <br>
+     * <b>Example:</b>
+     * <pre>
+     * String prefix = "myPrefix"; <br>
+     * String result = generatePrefixedRandomString(prefix); <br>
+     * // result: "myPrefix_<randomCharacters>" <br>
+     * </pre>
+     */
+    public static String generatePrefixedRandomString(String prefix) {
+        StringBuilder sb = new StringBuilder(prefix + "_");
         Random random = new Random();
 
         for (int i = 0; i < CLASS_LENGTH; i++) {
@@ -80,29 +104,38 @@ public class InstanceClassAndIDsGeneration {
     }
 
     public static String insertUniqueClassesToHtml(String html, String uniqueClassPrefix) {
-        // Generate a unique class prefix
 
         // Regex pattern to match HTML tags
-        Pattern pattern = Pattern.compile("<([a-zA-Z][a-zA-Z0-9]*)([^>]*)>");
-
+        Pattern pattern = Pattern.compile("<(\\w+)((?:\\s*[^=/>]+=\"[^\"]*\"\\s*)*)\\s*(/?)>");
         StringBuffer result = new StringBuffer();
         Matcher matcher = pattern.matcher(html);
 
         while (matcher.find()) {
             String tag = matcher.group(1);
             String attributes = matcher.group(2);
+            String selfClosingSlash = matcher.group(3);
 
+            // NOTE: Element filter for debugging purposes, or other.
+//             List<String> forbiddenElements = Arrays.asList("path", "circle", "svg");
+//             if (!forbiddenElements.contains(tag)) {
             // Check if there's already a class attribute
-            if (attributes.contains("class=")) {
-                // If class attribute exists, append our unique class
-                attributes = attributes.replaceFirst("(class=['\"])", "$1" + uniqueClassPrefix + " ");
-            } else {
-                // If no class attribute, add one
-                attributes += " class=\"" + uniqueClassPrefix + "\"";
-            }
+                if (attributes.contains("class=")) {
+                    // If class attribute exists, append our unique class
+                    attributes = attributes.replaceFirst("(class=['\"])", "$1" + uniqueClassPrefix + " ");
+                }
+                else {
+                    // If no class attribute, append one
+                    attributes += " class=\"" + uniqueClassPrefix + "\"";
+                }
+//        }
 
             // Replace the matched content with the modified tag
-            matcher.appendReplacement(result, "<" + tag + attributes + ">");
+            if (selfClosingSlash.isEmpty()) {
+                matcher.appendReplacement(result, "<" + tag + attributes + ">");
+            } else {
+                matcher.appendReplacement(result, "<" + tag + attributes + "/>");
+            }
+
         }
         matcher.appendTail(result);
 
