@@ -126,6 +126,7 @@ public class InstanceClassAndIDsGeneration {
                 else {
                     // If no class attribute, append one
                     attributes += " class=\"" + uniqueClassPrefix + "\"";
+
                 }
 //        }
 
