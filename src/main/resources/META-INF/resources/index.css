@@ -1,0 +1,8 @@
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #f0ece3;
+	/* Light beige background for the whole page */
+	user-select: none;
+}
