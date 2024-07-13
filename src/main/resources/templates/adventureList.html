@@ -100,8 +100,8 @@
 		<div class="adventure-list-item" tabindex="0" id="{adventure.id}"
 			 onclick="document.querySelector('#__lid_p1__ #listItemBuffer').textContent = '{adventure.id}';"
 			 hx-get="/adventures/{adventure.id}/info"
-			 hx-trigger="click[document.querySelector('.adventure-preview') !== null]"
-			 hx-target="#adventure-preview">
+			 hx-trigger="click[document.querySelector('.adventure-modal-preview') !== null]"
+			 hx-target="#adventure-modal-preview">
 			<span class="adventure-list-item-name">{adventure.name}</span>
 			<span class="adventure-list-item-days">{adventure.days} days</span>
 			<button class="adventure-list-delete-btn" hx-delete="/adventures/{adventure.id}" hx-target="#__lid_p1__"

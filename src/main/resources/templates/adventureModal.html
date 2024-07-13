@@ -1,4 +1,4 @@
-<div class="adventure-modal-component" id="adventure-modal-container">
+<div class="adventure-modal-component" id="__lid_1__">
 	<style>
 		.adventure-modal-component {
 			font-family: Arial, sans-serif;
@@ -56,13 +56,13 @@
 			overflow-y: auto;
 		}
 
-		.adventure-preview-column {
+		.adventure-modal-preview-column {
 			flex: 1;
-			height 300px;
+			height: 600px;
 			overflow-y: auto;
 		}
 
-		.adventure-preview {
+		.adventure-modal-preview {
 			border-left: 1px solid #ccc;
 			height: 100%;
 			margin-left: auto;
@@ -110,7 +110,7 @@
 		<div class="adventure-modal-header">
 			<h2 class="adventure-modal-title">Adventure Selection</h2>
 			<button class="adventure-modal-close"
-					hx-on--before-request="htmx.remove(htmx.find('#adventure-modal-container')); event.preventDefault();"
+					hx-on--before-request="htmx.remove(htmx.find('#__lid_1__')); event.preventDefault();"
 					hx-get="foo"
 					hx-trigger="click, keyup[event.key == 'Escape'] from:document" >&times;</button>
 		</div>
@@ -118,8 +118,8 @@
 			<div class="adventure-list-column" hx-get="/adventures" hx-trigger="load from:#adventure-modal-container">
 				<!-- Adventure list will be populated here -->
 			</div>
-			<div class="adventure-preview-column">
-				<div id="adventure-preview">
+			<div class="adventure-modal-preview-column">
+				<div id="adventure-modal-preview">
 					<!-- Adventure preview will be populated here -->
 				</div>
 			</div>
