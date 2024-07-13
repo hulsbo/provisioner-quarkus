@@ -77,9 +77,14 @@ public class AdventureResource {
 	@Path("/modal")
 	@Produces(MediaType.TEXT_HTML)
 	public Response returnModal() {
+
+		// Render in Qute
 		String renderedHtml = adventureModal.render();
-		System.out.println(renderedHtml);
-		return Response.ok(renderedHtml).build();
+
+		// Create component instance
+		String componentInstance = createComponentInstance(renderedHtml, adventureModal);
+
+		return Response.ok(componentInstance).build();
 	}
 
 	@Inject
