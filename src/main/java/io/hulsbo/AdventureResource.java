@@ -29,9 +29,9 @@ public class AdventureResource {
 		Adventure test = new Adventure(kCalCalculationStrategy);
 
 
-		test.addCrewMember("Oskar", 29,170 + Math.random()*10, 75,
+		test.addCrewMember("Oskar", 29, (int) (170 + Math.random()*10), 75,
 				Gender.MALE, PhysicalActivity.MODERATE , new HarrisBenedictOriginal());
-		test.addCrewMember("Lovisa", 31,160 + Math.random()*10, 75,
+		test.addCrewMember("Lovisa", 31, (int) (160 + Math.random()*10), 75,
 				Gender.FEMALE, PhysicalActivity.VERY_HEAVY , new HarrisBenedictOriginal());
 		test.setDays((int) (1 + Math.random() * 10));
 

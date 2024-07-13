@@ -7,8 +7,8 @@ import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 public class CrewMember {
     private final String name;
     private final int age;
-    private final double height;
-    private final double weight;
+    private final int height;
+    private final int weight;
     private final Gender gender;
     private final PhysicalActivity activity;
     private final KCalCalculationStrategy kCalCalculationStrategy;
@@ -17,7 +17,7 @@ public class CrewMember {
         return kCalCalculationStrategy;
     }
 
-    public CrewMember(String name, int age, double height, double weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
+    public CrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
         this.name = name;
         this.age = age;
         this.height = height;
@@ -29,13 +29,7 @@ public class CrewMember {
 
     public double getDailyKCalNeed() {
         double BMR = kCalCalculationStrategy.determineBMR(age, height, weight, gender);
-        return kCalCalculationStrategy.determineKCal(BMR, activity);
-    }
-
-    // NOTE: used in template 
-    public int getDailyKCalNeed(boolean asInt) {
-        double BMR = kCalCalculationStrategy.determineBMR(age, height, weight, gender);
-        return (int) kCalCalculationStrategy.determineKCal(BMR, activity);
+        return Math.round(kCalCalculationStrategy.determineKCal(BMR, activity));
     }
 
     public String getName() {
@@ -52,6 +46,13 @@ public class CrewMember {
 
     public PhysicalActivity getActivity() {
         return activity;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+    public int getHeight() {
+        return weight;
     }
 
     // Getters and setters if needed

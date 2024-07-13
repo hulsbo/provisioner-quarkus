@@ -91,7 +91,7 @@ public class Adventure extends BaseClass{
         return super.putChild(newMeal, weightedValue, 0.0);
     }
 
-    public void addCrewMember(String name, int age, double height, double weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
+    public void addCrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
         CrewMember newCrewMember = new CrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
         crew.add(newCrewMember);
         setCrewDailyKcalNeed();

@@ -1,0 +1,164 @@
+<div id="__lid_p1__">
+	<style>
+		#__lid_p1__ {
+			display: block;
+			font-family: Arial, sans-serif;
+			margin: 0;
+		}
+
+		#crew-list-table {
+			background-color: #ffffff;
+			border: 1px solid #a9c3c7;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		#crew-list-header {
+			display: flex;
+			flex-direction: row;
+			padding: 10px;
+			justify-content: space-between;
+			background: #dcd0c0;
+			border-radius: 5px 5px 0 0;
+			cursor: default;
+			font-weight: bold;
+		}
+
+		#crew-list-header-name {
+			flex: 1;
+		}
+
+		#crew-list-header-days {
+			text-align: center;
+			flex: 0 0 100px;
+		}
+
+		#crew-list-header-action {
+			width: 24px;
+		}
+
+		.crew-list-item {
+			display: flex;
+			flex-direction: row;
+			padding: 10px;
+			border-top: 1px solid #ccc;
+			justify-content: space-between;
+			align-items: center;
+			transition: background-color 0.1s;
+		}
+
+		.crew-list-item:hover {
+			background-color: #e1e6e7;
+		}
+
+		.crew-list-item:focus {
+			background-color: #a9c3c7;
+			outline: none;
+		}
+
+		.crew-list-item-name {
+			flex: 1;
+		}
+
+		.crew-list-item-days {
+			flex: 0 0 80px;
+			text-align: center;
+		}
+
+		.crew-list-edit-btn {
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			padding: 3px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: transparent;
+			border: 1px solid #ccc;
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+		}
+
+		.crew-list-edit-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.crew-list-edit-btn:hover {
+			background-color: #f0f0f0;
+			border-color: #999;
+		}
+
+		.crew-list-edit-btn:hover svg {
+			color: #2196F3; /* Change the icon color on hover */
+		}
+
+		.crew-list-edit-btn:focus {
+			outline: none;
+			box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.4);
+		}
+
+		.crew-list-edit-btn:active {
+			background-color: #e0e0e0;
+		}
+
+		.crew-list-delete-btn {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: transparent;
+			border: none;
+			cursor: pointer;
+			transition: background-color 0.1s;
+		}
+
+		.crew-list-delete-btn svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.crew-list-delete-btn:hover circle {
+			fill: #f44336;
+		}
+
+	</style>
+	<div id="crew-list-table">
+		<div id="crew-list-header">
+			<span id="crew-list-header-name">Name</span>
+			<span id="crew-list-header-expense">KCal/day</span>
+			<span id="crew-list-header-edit"></span>
+			<span id="crew-list-header-delete"></span>
+		</div>
+		{#for crewMember in crew}
+		<!-- TODO: js: produces "SyntaxError: Unexpected token ':'" -->
+		<div class="crew-list-item" tabindex="0" id="{adventure.id}"
+			 onclick="document.querySelector('#__lid_p1__ #listItemBuffer').textContent = '{crewMember.id}';"
+			 hx-get="/adventures/{adventure.id}/crew"
+			 hx-trigger="click[document.querySelector('.adventure-modal-preview') !== null]"
+			 hx-target="#adventure-modal-preview">
+			<span class="crew-list-item-name">{crewMember.name}</span>
+			<span class="crew-list-item-expense">{int(crewMember.dailyKCalNeed)}</span>
+			<button class="crew-list-edit-btn" hx-put="/adventures/{adventure.id}/crew/{crewMember.id}" hx-swap="outerHTML">
+				<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<button class="crew-list-delete-btn" hx-delete="/adventures/{adventure.id}/crew/{crewMember.id}" hx-swap="outerHTML">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					<circle cx="12" cy="12" r="12" fill="#808080" />
+					<path d="M7 7L17 17M7 17L17 7" stroke="white" stroke-width="2" stroke-linecap="round" />
+				</svg>
+			</button>
+		</div>
+		{/for}
+		<div style="display: none" id="listItemBuffer"></div>
+		{#if !adventures}
+		<p>No adventures found. Try creating one.</p>
+		{/if}
+	</div>
+</div>
