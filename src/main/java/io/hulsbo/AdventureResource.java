@@ -98,6 +98,31 @@ public class AdventureResource {
 		return Response.ok(renderedHtml).build();
 	}
 
+	@PUT
+	@Path("/{id}/input")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") UUID id) {
+
+		Adventure adventure = (Adventure) Manager.getObject(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+
+		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
+			String key = entry.getKey();
+			String singleValue = entry.getValue().get(0);  // Assuming single value
+
+			switch (key) {
+				case "name" -> adventure.setName(singleValue);
+				case "days" -> adventure.setDays(Integer.parseInt(singleValue));
+				// Add more cases as needed
+				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
+			}
+		}
+
+		return Response.ok().build();
+	}
+
 	@Inject
 	@Location("adventureDashboard.html")
 	Template adventureDashboard;

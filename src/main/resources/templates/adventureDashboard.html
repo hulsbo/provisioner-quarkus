@@ -331,9 +331,10 @@
 	</header>
 
 	<div class="container">
-		<h1>ADVENTURE<input type="text" value="{adventure.name}" id="adventure-name" placeholder="Enter adventure name"
-				autocomplete="off" hx-put="/api/adventure/name" hx-trigger="blur, keyup[key=='Enter']"
-				hx-target="#adventure-info"></h1>
+		<h1>ADVENTURE<input name="name" type="text" value="{adventure.name}" id="adventure-name"
+				placeholder="Enter adventure name" autocomplete="off"
+							hx-put="/adventures/{adventure.id}/input"
+							hx-trigger="blur changed, keyup[key == 'Enter'] changed"></h1>
 		<main class="grid">
 			<section>
 				<div class="section-banner">
@@ -341,7 +342,10 @@
 				</div>
 				<div class="section-content adventure-details">
 					<label for="adventure-days">DAYS</label>
-					<input type="number" id="adventure-days">
+					<input name="days" type="number" id="adventure-days"
+						   hx-put="/adventures/{adventure.id}/input"
+						   hx-trigger="blur changed, keyup[key == 'Enter'] changed"
+						   hx-on-input="if (this.value < 1) this.value = 1;">
 
 					<label for="crew-list">CREW</label>
 					<div id="crew-list" class="table-area" hx-get="/api/crew" hx-trigger="load">

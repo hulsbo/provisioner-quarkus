@@ -108,7 +108,11 @@ public class Adventure extends BaseClass{
     }
 
     public void setDays(int days) {
-        this.days = days;
+        if (days > 0) {
+            this.days = days;
+        } else {
+            throw new IllegalArgumentException("Days must be one or more.");
+        }
     }
 
     public int getDays() {
