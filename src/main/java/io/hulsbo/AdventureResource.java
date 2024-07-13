@@ -65,38 +65,6 @@ public class AdventureResource {
 		}
 	}
 
-	/**
-	 * <p>
-	 * Renders a HTML template with
-	 *
-	 * <ul>
-	 *     <li>uniqueClass as: <code>componentName_{randomized string}</code></li>
-	 *     <li>unique local ids ("lids") as: <code>"lid_" + matcher.group(1) + "__" + uniqueClass</code>.</li>
-	 * </ul>
-	 * template filename.
-	 * </p>
-	 * <p>
-	 * NOTE: id placeholders in template needs to match the following regex:
-	 * 
-	 * <pre> {@code "__lid_([a-zA-Z\d]+)__" }</pre>
-	 * 
-	 * to be replaced with unique ones.
-	 * </p>
-	 *
-	 * @param adventures the list of adventures to render
-	 * @return the rendered HTML template with unique instance classes and IDs
-	 */
-	private String renderUniqueTemplate(List<Adventure> adventures) {
-
-		String renderedHtml = adventureList.data("adventures", adventures).render();
-
-		String renderedHtmlWithClass = addInstanceClassAndIDs(
-				renderedHtml,
-				adventureList.getId().replace(".html", ""
-				));
-		return renderedHtmlWithClass;
-	}
-
 	@Inject
 	@Location("adventureModal.html")
 	Template adventureModal;
@@ -164,6 +132,38 @@ public class AdventureResource {
 		Manager.removeObject(id);
 		// Use the existing browseAdventures method to fetch the updated list
 		return browseAdventures();
+	}
+
+	/**
+	 * <p>
+	 * Renders a HTML template with
+	 *
+	 * <ul>
+	 *     <li>uniqueClass as: <code>componentName_{randomized string}</code></li>
+	 *     <li>unique local ids ("lids") as: <code>"lid_" + matcher.group(1) + "__" + uniqueClass</code>.</li>
+	 * </ul>
+	 * template filename.
+	 * </p>
+	 * <p>
+	 * NOTE: id placeholders in template needs to match the following regex:
+	 *
+	 * <pre> {@code "__lid_([a-zA-Z\d]+)__" }</pre>
+	 *
+	 * to be replaced with unique ones.
+	 * </p>
+	 *
+	 * @param adventures the list of adventures to render
+	 * @return the rendered HTML template with unique instance classes and IDs
+	 */
+	private String renderUniqueTemplate(List<Adventure> adventures) {
+
+		String renderedHtml = adventureList.data("adventures", adventures).render();
+
+		String renderedHtmlWithClass = addInstanceClassAndIDs(
+				renderedHtml,
+				adventureList.getId().replace(".html", ""
+				));
+		return renderedHtmlWithClass;
 	}
 
 }
