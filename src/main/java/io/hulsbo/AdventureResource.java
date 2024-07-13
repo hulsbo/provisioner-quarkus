@@ -142,7 +142,7 @@ public class AdventureResource {
 			}
 
 			// Render in Qute
-			String renderedHtml = adventureDashboard.data("adventureId", adventure ).render();
+			String renderedHtml = adventureDashboard.data("adventure", adventure ).render();
 
 			// Create component instance
 			String componentInstance = createComponentInstance(renderedHtml, adventureDashboard);
@@ -150,8 +150,11 @@ public class AdventureResource {
 			return Response.ok(componentInstance).build();
 
 		} catch(Exception exception) {
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity("<div class='error'>Bad request, could not load adventure.</div>")
+			// Log the exception
+			exception.printStackTrace();
+
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity("Error 500, refer to stack trace.")
 					.build();
 		}
 	}
