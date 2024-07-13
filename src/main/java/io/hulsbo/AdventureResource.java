@@ -103,6 +103,28 @@ public class AdventureResource {
 		return Response.ok(renderedHtml).build();
 	}
 
+	@Inject
+	@Location("crewList.html")
+	Template crewList;
+
+	@GET
+	@Path("/{id}/crew")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getCrewList(@PathParam("id") UUID id) {
+		Adventure adventure = (Adventure) Manager.getObject(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+
+		// Render in Qute
+		String renderedHtml = crewList.data("crew", adventure.getCrew(), "adventure", adventure).render();
+
+		// Create component instance
+		String componentInstance = createComponentInstance(renderedHtml, crewList);
+
+		return Response.ok(componentInstance).build();
+	}
+
 	@PUT
 	@Path("/{id}/input")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
