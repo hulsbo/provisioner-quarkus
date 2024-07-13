@@ -5,11 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Adventure Planner</title>
-	<link rel="stylesheet" href="index.css">
+	<link rel="stylesheet" href="../META-INF/resources/index.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.11/htmx.min.js"></script>
-	<script src="js/makeFocusableOnClick.js"></script>
-	<script src="js/ratio-sum-calculator.js"></script>
-	<script src="components/prov-button/prov-button.js"></script>
+	<script src="../META-INF/resources/js/makeFocusableOnClick.js"></script>
+	<script src="../META-INF/resources/js/ratio-sum-calculator.js"></script>
+	<script src="../META-INF/resources/components/prov-button/prov-button.js"></script>
 </head>
 
 <body>
@@ -41,6 +41,7 @@
 					<h2>MEALS</h2>
 				</div>
 				<div class="section-content">
+
 					<div id="meals-list" class="table-area" hx-get="/api/meals" hx-trigger="load">
 						<div class="table-header">
 							<div class="table-label">Name</div>

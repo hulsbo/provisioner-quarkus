@@ -89,6 +89,13 @@
 			margin-left: auto;
 		}
 
+		.adventure-modal-button.load[disabled="true"] {
+			background-color: silver;
+			color: white;
+			margin-left: auto;
+				cursor: inherit;
+		}
+
 		.adventure-modal-button.create {
 			background-color: #2196F3;
 			color: white;
@@ -122,7 +129,11 @@
 				hx-target=".adventure-list-column">
 				Create New Adventure
 			</button>
-			<button class="adventure-modal-button load" hx-get="/adventures/" hx-trigger="click">
+			<button class="adventure-modal-button load"
+					hx-get="/adventures/load"
+					hx-vals="js:\{id: document.querySelector('.adventure-list-column #listItemBuffer').textContent \}"
+					hx-trigger="click"
+					hx-target=".adventure-list-column">
 				Load Adventure
 			</button>
 		</div>

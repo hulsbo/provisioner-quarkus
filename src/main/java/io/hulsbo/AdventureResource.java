@@ -48,7 +48,11 @@ public class AdventureResource {
 		try {
 			List<Adventure> adventures = Manager.getAllAdventures();
 
-			String renderedUniqueTemplate = renderUniqueTemplate(adventures);
+			// Render in Qute
+			String renderedHtml = adventureList.data("adventures", adventures).render();
+
+			// Create component Instance
+			String renderedUniqueTemplate = createComponentInstance(renderedHtml, adventureList);
 
 			return Response
 					.ok(renderedUniqueTemplate)
@@ -94,10 +98,14 @@ public class AdventureResource {
 		return Response.ok(renderedHtml).build();
 	}
 
+	@Inject
+	@Location("adventureDashboard.html")
+	Template adventureDashboard;
+
 	@GET
-	@Path("/{id}")
+	@Path("/load")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventure(@PathParam("id") String id) {
+	public Response getAdventure(@QueryParam("id") String id) {
 		try {
 			UUID adventureId = UUID.fromString(id);
 			Adventure adventure = (Adventure) Manager.getObject(adventureId);
@@ -108,20 +116,26 @@ public class AdventureResource {
 						.build();
 			}
 
-			String htmlResponse = "<div class='adventure-item' data-id='" + adventure.getId() + "'>" +
-					"<span class='adventure-name'>" + adventure.getName() + "</span>" +
-					"<span class='adventure-days'>" + adventure.getDays() + " days</span>" +
-					"<span class='adventure-crew'>" + adventure.getCrewSize() + " crew members</span>" +
-					"<span class='adventure-kcal'>" + adventure.getCrewDailyKcalNeed()
-					+ " total kCal need per day</span>" +
-					"</div>";
+			// Render in Qute
+			String renderedHtml = adventureDashboard.data("adventureId", id ).render();
 
-			return Response.ok(htmlResponse).build();
-		} catch (IllegalArgumentException e) {
+			// Create component instance
+			String componentInstance = createComponentInstance(renderedHtml, adventureDashboard);
+
+			return Response.ok(componentInstance).build();
+
+		} catch(Exception exception) {
 			return Response.status(Response.Status.BAD_REQUEST)
-					.entity("<div class='error'>Invalid adventure ID</div>")
+					.entity("<div class='error'>Bad request, could not load adventure.</div>")
 					.build();
 		}
+	}
+
+	private String createComponentInstance(String renderedHtml, Template template) {
+		return addInstanceClassAndIDs(
+				renderedHtml,
+				template.getId().replace(".html", ""
+				));
 	}
 
 	@DELETE
@@ -133,37 +147,4 @@ public class AdventureResource {
 		// Use the existing browseAdventures method to fetch the updated list
 		return browseAdventures();
 	}
-
-	/**
-	 * <p>
-	 * Renders a HTML template with
-	 *
-	 * <ul>
-	 *     <li>uniqueClass as: <code>componentName_{randomized string}</code></li>
-	 *     <li>unique local ids ("lids") as: <code>"lid_" + matcher.group(1) + "__" + uniqueClass</code>.</li>
-	 * </ul>
-	 * template filename.
-	 * </p>
-	 * <p>
-	 * NOTE: id placeholders in template needs to match the following regex:
-	 *
-	 * <pre> {@code "__lid_([a-zA-Z\d]+)__" }</pre>
-	 *
-	 * to be replaced with unique ones.
-	 * </p>
-	 *
-	 * @param adventures the list of adventures to render
-	 * @return the rendered HTML template with unique instance classes and IDs
-	 */
-	private String renderUniqueTemplate(List<Adventure> adventures) {
-
-		String renderedHtml = adventureList.data("adventures", adventures).render();
-
-		String renderedHtmlWithClass = addInstanceClassAndIDs(
-				renderedHtml,
-				adventureList.getId().replace(".html", ""
-				));
-		return renderedHtmlWithClass;
-	}
-
 }

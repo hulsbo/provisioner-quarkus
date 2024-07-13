@@ -97,7 +97,8 @@
 		</div>
 		{#for adventure in adventures}
 		<!-- TODO: js: produces "SyntaxError: Unexpected token ':'" -->
-		<div class="adventure-list-item" tabindex="0"
+		<div class="adventure-list-item" tabindex="0" id="{adventure.id}"
+			 onclick="document.querySelector('#__lid_p1__ #listItemBuffer').textContent = '{adventure.id}';"
 			 hx-get="/adventures/{adventure.id}/info"
 			 hx-trigger="click[document.querySelector('.adventure-preview') !== null]"
 			 hx-target="#adventure-preview">
@@ -112,6 +113,7 @@
 			</button>
 		</div>
 		{/for}
+		<div style="display: none" id="listItemBuffer"></div>
 		{#if !adventures}
 		<p>No adventures found. Try creating one.</p>
 		{/if}
