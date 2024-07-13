@@ -117,7 +117,7 @@ public class AdventureResource {
 			}
 
 			// Render in Qute
-			String renderedHtml = adventureDashboard.data("adventureId", id ).render();
+			String renderedHtml = adventureDashboard.data("adventureId", adventure ).render();
 
 			// Create component instance
 			String componentInstance = createComponentInstance(renderedHtml, adventureDashboard);
