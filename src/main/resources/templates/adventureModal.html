@@ -102,8 +102,10 @@
 	<div class="adventure-modal-content">
 		<div class="adventure-modal-header">
 			<h2 class="adventure-modal-title">Adventure Selection</h2>
-			<button class="adventure-modal-close" hx-get="/ui/clear" hx-trigger="click"
-				hx-target="#adventure-modal-container" hx-swap="outerHTML:remove">&times;</button>
+			<button class="adventure-modal-close"
+					hx-on--before-request="htmx.remove(htmx.find('#adventure-modal-container')); event.preventDefault();"
+					hx-get="foo"
+					hx-trigger="click, keyup[event.key == 'Escape'] from:document" >&times;</button>
 		</div>
 		<div class="adventure-modal-body">
 			<div class="adventure-list-column" hx-get="/adventures" hx-trigger="load from:#adventure-modal-container">
