@@ -90,6 +90,24 @@ public class AdventureResource {
 	}
 
 	@Inject
+	@Location("createCrewMemberModal.html")
+	Template createCrewMemberModal;
+
+	@GET
+	@Path("/modal/crew-member-form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response openCreateCrewMemberModal() {
+
+		// Render in Qute
+		String renderedHtml = createCrewMemberModal.render();
+
+		// Create component instance
+		String componentInstance = createComponentInstance(renderedHtml, createCrewMemberModal);
+
+		return Response.ok(componentInstance).build();
+	}
+
+	@Inject
 	@Location("adventureInfo.html")
 	Template adventureInfoTemplate;
 
@@ -238,6 +256,5 @@ public class AdventureResource {
 					.build();
 		}
 	}
-
 
 }
