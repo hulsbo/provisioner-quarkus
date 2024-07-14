@@ -121,7 +121,7 @@
 			</button>
 		</div>
 		{/for}
-		<input style="display: none" id="__lid_buffer__" hx-trigger="valueChanged" hx-get="adventures/info" name="id"
+		<input class="buffer" style="display: none" id="__lid_buffer__" hx-trigger="valueChanged" hx-get="adventures/info" name="id"
 			hx-target="#adventure-modal-preview" />
 		{#if !adventures}
 		<p>No adventures found. Try creating one.</p>
