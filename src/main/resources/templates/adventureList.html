@@ -87,7 +87,6 @@
 		.adventure-list-delete-btn:hover circle {
 			fill: #f44336;
 		}
-
 	</style>
 	<div id="adventure-list-table">
 		<div id="adventure-list-header">
@@ -98,14 +97,23 @@
 		{#for adventure in adventures}
 		<!-- TODO: js: produces "SyntaxError: Unexpected token ':'" -->
 		<div class="adventure-list-item" tabindex="0" id="{adventure.id}"
-			 onclick="document.querySelector('#__lid_p1__ #listItemBuffer').textContent = '{adventure.id}';"
-			 hx-get="/adventures/{adventure.id}/info"
-			 hx-trigger="click[document.querySelector('.adventure-modal-preview') !== null]"
-			 hx-target="#adventure-modal-preview">
+			hx-on--after-on-load="event.detail.successful && event.detail.elt == this.querySelector('.adventure-list-delete-btn') && htmx.remove(this)"
+			hx-on-click="
+			 const elt = document.querySelector('#__lid_buffer__');
+			 const id = '{adventure.id}';
+			 const value = elt.value
+			 if (value == null || elt.value != '{adventure.id}') \{
+			 	elt.value = ('name', '{adventure.id}');
+			 	htmx.trigger(elt, 'valueChanged');
+			 	console.log('after: ', elt, elt.getAttribute('value'), elt.value)
+			 \}
+			">
 			<span class="adventure-list-item-name">{adventure.name}</span>
 			<span class="adventure-list-item-days">{adventure.days} days</span>
-			<button class="adventure-list-delete-btn" hx-delete="/adventures/{adventure.id}" hx-target="#__lid_p1__"
-				hx-swap="outerHTML">
+			<button class="adventure-list-delete-btn"
+					hx-delete="/adventures/{adventure.id}/delete"
+					onclick="event.stopPropagation();"
+					hx-target=".adventure-list-item#{adventure.id}" hx-swap="outerHTML">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 					<circle cx="12" cy="12" r="12" fill="#808080" />
 					<path d="M7 7L17 17M7 17L17 7" stroke="white" stroke-width="2" stroke-linecap="round" />
@@ -113,7 +121,8 @@
 			</button>
 		</div>
 		{/for}
-		<div style="display: none" id="listItemBuffer"></div>
+		<input style="display: none" id="__lid_buffer__" hx-trigger="valueChanged" hx-get="adventures/info" name="id"
+			hx-target="#adventure-modal-preview" />
 		{#if !adventures}
 		<p>No adventures found. Try creating one.</p>
 		{/if}

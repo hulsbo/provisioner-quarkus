@@ -194,12 +194,26 @@ public class AdventureResource {
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{id}/delete")
 	@Produces(MediaType.TEXT_HTML)
-	public Response deleteAdventure(@PathParam("id") UUID id) {
-		// Implement deletion logic here
-		Manager.removeObject(id);
-		// Use the existing browseAdventures method to fetch the updated list
-		return browseAdventures();
+	public Response deleteAdventure(@PathParam("id") SafeID id) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+		try {
+			String response = Manager.removeBaseClassObject(id);
+			return Response.status(Response.Status.NO_CONTENT).header("success-info", response).build();
+		}
+		catch(Exception exception) {
+			// Log the exception
+			exception.printStackTrace();
+
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(StackTraceFormatter.formatStackTrace(exception))
+					.build();
+		}
+	}
+
 	}
 }
