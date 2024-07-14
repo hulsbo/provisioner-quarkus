@@ -5,7 +5,6 @@
 //import jakarta.ws.rs.*;
 //import jakarta.ws.rs.core.MediaType;
 //import jakarta.ws.rs.core.Response;
-//import java.util.UUID;
 //import io.hulsbo.model.Adventure;
 //import io.hulsbo.model.Manager;
 //import io.hulsbo.util.CrewMember.Gender;
@@ -28,8 +27,8 @@
 //
 //    @GET
 //    @Path("/{id}")
-//    public Response getAdventure(@PathParam("id") UUID id) {
-//        Adventure adventure = (Adventure) Manager.getObject(id);
+//    public Response getAdventure(@PathParam("id") SafeID id) {
+//        Adventure adventure = (Adventure) Manager.getBaseClass(id);
 //        if (adventure == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
@@ -38,8 +37,8 @@
 //
 //    @POST
 //    @Path("/{id}/crew")
-//    public Response addCrewMember(
-//            @PathParam("id") UUID adventureId,
+//    public Response putCrewMember(
+//            @PathParam("id") SafeID adventureId,
 //            @QueryParam("name") String name,
 //            @QueryParam("age") int age,
 //            @QueryParam("height") double height,
@@ -47,19 +46,19 @@
 //            @QueryParam("gender") Gender gender,
 //            @QueryParam("activity") PhysicalActivity activity) {
 //
-//        Adventure adventure = (Adventure) Manager.getObject(adventureId);
+//        Adventure adventure = (Adventure) Manager.getBaseClass(adventureId);
 //        if (adventure == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
 //
-//        adventure.addCrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
+//        adventure.putCrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
 //        return Response.ok(adventure).build();
 //    }
 //
 //    @PUT
 //    @Path("/{id}/days")
-//    public Response setDays(@PathParam("id") UUID id, @QueryParam("days") int days) {
-//        Adventure adventure = (Adventure) Manager.getObject(id);
+//    public Response setDays(@PathParam("id") SafeID id, @QueryParam("days") int days) {
+//        Adventure adventure = (Adventure) Manager.getBaseClass(id);
 //        if (adventure == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
@@ -70,8 +69,8 @@
 //
 //    @GET
 //    @Path("/{id}/info")
-//    public Response getAdventureInfo(@PathParam("id") UUID id) {
-//        Adventure adventure = (Adventure) Manager.getObject(id);
+//    public Response getAdventureInfo(@PathParam("id") SafeID id) {
+//        Adventure adventure = (Adventure) Manager.getBaseClass(id);
 //        if (adventure == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }

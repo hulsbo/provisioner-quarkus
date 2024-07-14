@@ -25,7 +25,7 @@
             <th>Activity Level</th>
             <th>Daily KCal Need</th>
         </tr>
-        {#for crewMember in adventure.crew}
+        {#for crewMember in adventure.getAllCrewMembers()}
         <tr>
             <td>{crewMember.name}</td>
             <td>{crewMember.gender.toString().toLowerCase()}</td>

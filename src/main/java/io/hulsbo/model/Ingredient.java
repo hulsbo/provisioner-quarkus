@@ -2,7 +2,7 @@ package io.hulsbo.model;
 
 import java.security.SecureRandom;
 import java.util.Set;
-import java.util.UUID;
+import io.hulsbo.util.model.SafeID;
 
 public class Ingredient extends BaseClass {
 
@@ -10,15 +10,15 @@ public class Ingredient extends BaseClass {
     public Ingredient() {
         SecureRandom random = new SecureRandom();
         for (String nutrient : nutrientsMap.keySet()) {
-            UUID key = putChild(new Nutrient(), 0.0, 0.0);
+            SafeID key = putChild(new Nutrient(), 0.0, 0.0);
             modifyWeightOfNutrient(key, random.nextInt(1,101));
-            Manager.getObject(key).setName(nutrient); // returns found parent msg
+            Manager.getBaseClass(key).setName(nutrient); // returns found parent msg
         }
-        for (UUID key : childMap.keySet()) {
+        for (SafeID key : childMap.keySet()) {
             nutrientsMap.put(childMap.get(key).getChild().getName(), childMap.get(key).getRatio());
         }
     }
-    public void modifyWeightOfNutrient(UUID id, double weight) {
+    public void modifyWeightOfNutrient(SafeID id, double weight) {
         if (childMap.get(id) == null) {
             throw new IllegalArgumentException("No nutrient with such name exist.");
         }
@@ -31,14 +31,14 @@ public class Ingredient extends BaseClass {
         // Calculate the current total weight
         double totalWeight = 0.0;
 
-        Set<UUID> keys = childMap.keySet();
+        Set<SafeID> keys = childMap.keySet();
 
-        for (UUID key : keys) {
+        for (SafeID key : keys) {
             totalWeight += childMap.get(key).getRecipeWeight();
         }
 
         // update all ratios
-        for (UUID key : keys) {
+        for (SafeID key : keys) {
             double weightedValue = childMap.get(key).getRecipeWeight() / totalWeight;
             modifyRatio(key, weightedValue);
         }

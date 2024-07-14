@@ -6,14 +6,17 @@ import io.hulsbo.util.model.CrewMember.Gender;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
 import io.hulsbo.util.model.CrewMember.PhysicalActivity;
+import io.hulsbo.util.model.SafeID;
+import io.hulsbo.util.service.StackTraceFormatter;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
@@ -28,10 +31,9 @@ public class AdventureResource {
 	public Response createAdventure() {
 		Adventure test = new Adventure(kCalCalculationStrategy);
 
-
-		test.addCrewMember("Oskar", 29, (int) (170 + Math.random()*10), 75,
+		test.putCrewMember("Oskar", 29, (int) (170 + Math.random()*10), 75,
 				Gender.MALE, PhysicalActivity.MODERATE , new HarrisBenedictOriginal());
-		test.addCrewMember("Lovisa", 31, (int) (160 + Math.random()*10), 75,
+		test.putCrewMember("Lovisa", 31, (int) (160 + Math.random()*10), 75,
 				Gender.FEMALE, PhysicalActivity.VERY_HEAVY , new HarrisBenedictOriginal());
 		test.setDays((int) (1 + Math.random() * 10));
 
@@ -92,10 +94,10 @@ public class AdventureResource {
 	Template adventureInfoTemplate;
 
 	@GET
-	@Path("/{id}/info")
+	@Path("/info")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventureInfo(@PathParam("id") UUID id) {
-		Adventure adventure = (Adventure) Manager.getObject(id);
+	public Response getAdventureInfo(@QueryParam("id") SafeID id) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
 			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
 		}
@@ -110,14 +112,14 @@ public class AdventureResource {
 	@GET
 	@Path("/{id}/crew")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getCrewList(@PathParam("id") UUID id) {
-		Adventure adventure = (Adventure) Manager.getObject(id);
+	public Response getCrewList(@PathParam("id") SafeID id) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
 			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
 		}
 
 		// Render in Qute
-		String renderedHtml = crewList.data("crew", adventure.getCrew(), "adventure", adventure).render();
+		String renderedHtml = crewList.data( "adventure", adventure).render();
 
 		// Create component instance
 		String componentInstance = createComponentInstance(renderedHtml, crewList);
@@ -128,9 +130,9 @@ public class AdventureResource {
 	@PUT
 	@Path("/{id}/input")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") UUID id) {
+	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
 
-		Adventure adventure = (Adventure) Manager.getObject(id);
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
 			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
 		}
@@ -157,10 +159,9 @@ public class AdventureResource {
 	@GET
 	@Path("/load")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventure(@QueryParam("id") String id) {
+	public Response getAdventure(@QueryParam("id") SafeID id) {
 		try {
-			UUID adventureId = UUID.fromString(id);
-			Adventure adventure = (Adventure) Manager.getObject(adventureId);
+            Adventure adventure = (Adventure) Manager.getBaseClass(id);
 
 			if (adventure == null) {
 				return Response.status(Response.Status.NOT_FOUND)
@@ -215,5 +216,28 @@ public class AdventureResource {
 		}
 	}
 
+	@DELETE
+	@Path("{adventureId}/crew/{crewMemberId}")
+	public Response deleteObject(@PathParam("adventureId") SafeID adventureId, @PathParam("crewMemberId") SafeID crewMemberId) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(adventureId);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+		try {
+			String response = adventure.removeCrewMember(crewMemberId);
+			// TODO: Replace with another call on client - side to path /adventures,
+			//  to make this delete method generic for all BaseClass objects/components.
+			return Response.ok(response).build();
+		}
+		catch(Exception exception) {
+			// Log the exception
+			exception.printStackTrace();
+
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(exception)
+					.build();
+		}
 	}
+
+
 }

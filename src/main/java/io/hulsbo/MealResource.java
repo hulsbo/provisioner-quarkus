@@ -3,7 +3,7 @@
 //import jakarta.ws.rs.*;
 //import jakarta.ws.rs.core.MediaType;
 //import jakarta.ws.rs.core.Response;
-//import java.util.UUID;
+//import io.hulsbo.util.model.SafeID;
 //
 //import io.hulsbo.model.Meal;
 //import io.hulsbo.model.Ingredient;
@@ -23,8 +23,8 @@
 //
 //    @GET
 //    @Path("/{id}")
-//    public Response getMeal(@PathParam("id") UUID id) {
-//        Meal meal = (Meal) Manager.getObject(id);
+//    public Response getMeal(@PathParam("id") SafeID id) {
+//        Meal meal = (Meal) Manager.getBaseClass(id);
 //        if (meal == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
@@ -33,26 +33,26 @@
 //
 //    @POST
 //    @Path("/{id}/ingredients")
-//    public Response addIngredient(@PathParam("id") UUID mealId, @QueryParam("name") String name) {
-//        Meal meal = (Meal) Manager.getObject(mealId);
+//    public Response addIngredient(@PathParam("id") SafeID mealId, @QueryParam("name") String name) {
+//        Meal meal = (Meal) Manager.getBaseClass(mealId);
 //        if (meal == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
 //
 //        Ingredient ingredient = new Ingredient();
 //        ingredient.setName(name);
-//        UUID ingredientId = meal.putChild(ingredient);
+//        SafeID ingredientId = meal.putChild(ingredient);
 //        return Response.ok(ingredientId).build();
 //    }
 //
 //    @PUT
 //    @Path("/{mealId}/ingredients/{ingredientId}")
 //    public Response modifyIngredientWeight(
-//            @PathParam("mealId") UUID mealId,
-//            @PathParam("ingredientId") UUID ingredientId,
+//            @PathParam("mealId") SafeID mealId,
+//            @PathParam("ingredientId") SafeID ingredientId,
 //            @QueryParam("weight") double weight) {
 //
-//        Meal meal = (Meal) Manager.getObject(mealId);
+//        Meal meal = (Meal) Manager.getBaseClass(mealId);
 //        if (meal == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }
@@ -63,8 +63,8 @@
 //
 //    @GET
 //    @Path("/{id}/info")
-//    public Response getMealInfo(@PathParam("id") UUID id) {
-//        Meal meal = (Meal) Manager.getObject(id);
+//    public Response getMealInfo(@PathParam("id") SafeID id) {
+//        Meal meal = (Meal) Manager.getBaseClass(id);
 //        if (meal == null) {
 //            return Response.status(Response.Status.NOT_FOUND).build();
 //        }

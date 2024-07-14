@@ -3,17 +3,19 @@ package io.hulsbo.model;
 import io.hulsbo.util.model.CrewMember.Gender;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
 import io.hulsbo.util.model.CrewMember.PhysicalActivity;
+import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.model.baseclass.ChildWrapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Adventure extends BaseClass{
-    private final List<CrewMember> crew = new ArrayList<>();
+    private final Map<SafeID, CrewMember> crewMemberMap = new LinkedHashMap<>();
     private double crewDailyKcalNeed;
     private double weight;
     private int days;
-    private final Map<UUID, Double> mealWeights = new LinkedHashMap<>(); // NOTE: This one uses not ChildMap keys.
-    private final Map<UUID, Double> ingredientWeights = new LinkedHashMap<>();
+    private final Map<SafeID, Double> mealWeights = new LinkedHashMap<>(); // NOTE: This one uses not ChildMap keys.
+    private final Map<SafeID, Double> ingredientWeights = new LinkedHashMap<>();
     private final KCalCalculationStrategy kCalCalculationStrategy;
 
     public Adventure(KCalCalculationStrategy calcStrategy) {
@@ -26,8 +28,6 @@ public class Adventure extends BaseClass{
         setWeight();
     }
 
-
-
     public void setWeight() {
         if (energyDensity != 0) {
             this.weight = (crewDailyKcalNeed*days)/energyDensity;
@@ -38,7 +38,7 @@ public class Adventure extends BaseClass{
         return weight;
     }
 
-    public Map<UUID, Double> getMealWeights() {
+    public Map<SafeID, Double> getMealWeights() {
         return mealWeights;
     }
 
@@ -46,10 +46,10 @@ public class Adventure extends BaseClass{
 
         mealWeights.clear();
 
-        Set<UUID> keys = childMap.keySet();
-        for (UUID key : keys) {
+        Set<SafeID> keys = childMap.keySet();
+        for (SafeID key : keys) {
             // NOTE: To be consistent with ingredientWeights, we here use the id of the Meal object itself.
-            UUID mealKey = childMap.get(key).getChild().getId();
+            SafeID mealKey = childMap.get(key).getChild().getId();
             mealWeights.put(mealKey, weight*childMap.get(key).getRatio());
         }
     }
@@ -60,15 +60,15 @@ public class Adventure extends BaseClass{
 
         setMealWeights(); // Ingredient weights depends on an updated mealWeights field.
 
-        Set<UUID> mealKeys = mealWeights.keySet();
+        Set<SafeID> mealKeys = mealWeights.keySet();
 
-        for (UUID mealKey : mealKeys) { // For each meal, calculate its child ingredients weights and save in ingredientWeights.
+        for (SafeID mealKey : mealKeys) { // For each meal, calculate its child ingredients weights and save in ingredientWeights.
 
-            Map<UUID, ChildWrapper> mealIngredients = childMap.get(mealKey).getChild().childMap;
+            Map<SafeID, ChildWrapper> mealIngredients = childMap.get(mealKey).getChild().childMap;
 
-            Set<UUID> ingredientKeys = mealIngredients.keySet();
+            Set<SafeID> ingredientKeys = mealIngredients.keySet();
 
-            for (UUID ingredientKey : ingredientKeys) {
+            for (SafeID ingredientKey : ingredientKeys) {
                 // NOTE: Since there's no direct connection to this object and the ingredient, we use the id of the ingredient itself.
                 ingredientWeights.put(ingredientKey, mealWeights.get(mealKey)*mealIngredients.get(ingredientKey).getRatio());
             }
@@ -84,25 +84,25 @@ public class Adventure extends BaseClass{
     /**
      * Add a new meal to meals hashmap and the ratios hashmap using the same key.
      *
-     * @return UUID key of newChild
+     * @return SafeID key of newChild
      */
-    public UUID putChild(Meal newMeal) {
+    public SafeID putChild(Meal newMeal) {
         double weightedValue = giveSpaceForAnotherEntry();
         return super.putChild(newMeal, weightedValue, 0.0);
     }
 
-    public void addCrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
+    public void putCrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
         CrewMember newCrewMember = new CrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
-        crew.add(newCrewMember);
+        crewMemberMap.put(newCrewMember.getId() , newCrewMember);
+        // NOTE: Registration in Manager is done in constructor.
         setCrewDailyKcalNeed();
     }
 
     public void setCrewDailyKcalNeed() {
         double sum = 0;
-        for (CrewMember crewMember : crew) {
+        for (CrewMember crewMember : crewMemberMap.values()) {
             sum += crewMember.getDailyKCalNeed();
         }
-        System.out.println(sum);
         this.crewDailyKcalNeed = sum;
         setWeight();
     }
@@ -125,7 +125,7 @@ public class Adventure extends BaseClass{
         System.out.println();
         System.out.println("Crew members: ".toUpperCase());
         int i = 1;
-        for (CrewMember crewMember : crew) {
+        for (CrewMember crewMember : crewMemberMap.values()) {
             System.out.println();
             System.out.printf("%25s %s %n", "Crew member " + i + ":", crewMember.getName());
             System.out.printf("%25s %s %n", "Gender:"  ,crewMember.getGender().toString().toLowerCase());
@@ -154,7 +154,7 @@ public class Adventure extends BaseClass{
             System.out.println();
             System.out.println();
             // For adventures, also sum each ingredient for each meal
-            Map<UUID, ChildWrapper> childMapIngredient = value.getChild().childMap;
+            Map<SafeID, ChildWrapper> childMapIngredient = value.getChild().childMap;
             childMapIngredient.forEach((childMapIngredientKey, childMapIngredientValue) -> {
                 System.out.printf("%15s |", childMapIngredientValue.getChild().getName());
                 System.out.printf(" ratio: " + "%5.1f %%", childMapIngredient.get(childMapIngredientKey).getRatio()*100);
@@ -171,10 +171,10 @@ public class Adventure extends BaseClass{
         // Summary
         System.out.printf("%10s |", getClass().getSimpleName());
 
-        Set<UUID> children = childMap.keySet();
+        Set<SafeID> children = childMap.keySet();
         double sum = 0;
 
-        for (UUID id : children) {
+        for (SafeID id : children) {
             sum += childMap.get(id).getRatio();
         }
 
@@ -193,11 +193,11 @@ public class Adventure extends BaseClass{
     }
     // NOTE: Used in template.
     public int getCrewSize() {
-        return crew.size();
+        return crewMemberMap.size();
     }
     // NOTE: Used in template.
-    public List<CrewMember> getCrew() {
-        return this.crew;
+    public List<CrewMember> getAllCrewMembers() {
+        return new ArrayList<>(crewMemberMap.values());
     }
 
     // NOTE: Used in template.
@@ -206,7 +206,7 @@ public class Adventure extends BaseClass{
     }
 
     // NOTE: Used in template.
-    public Map<UUID, ChildWrapper> getChildMap() {
+    public Map<SafeID, ChildWrapper> getChildMap() {
         return childMap;
     }
     // NOTE: Used in template.
@@ -223,4 +223,8 @@ public class Adventure extends BaseClass{
     }
 
 
+    public String removeCrewMember(SafeID id) {
+        crewMemberMap.remove(id);
+        return Manager.removeCrewMember(id);
+    }
 }
