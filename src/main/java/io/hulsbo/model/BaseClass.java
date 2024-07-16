@@ -4,15 +4,18 @@ import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.model.baseclass.ChildWrapper;
 import io.hulsbo.util.model.baseclass.NutrientsMap;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class BaseClass {
     protected final NutrientsMap nutrientsMap = new NutrientsMap();
     protected final Map<SafeID, ChildWrapper> childMap = new LinkedHashMap<>();
     protected final Map<String, SafeID> nameIndex = new HashMap<>();
+    private final SafeID id;
     protected double energyDensity;
     private String name;
-    private final SafeID id;
 
     public BaseClass() {
         SafeID id = SafeID.randomSafeID();
@@ -24,6 +27,7 @@ public abstract class BaseClass {
     public String getName() {
         return this.name;
     }
+
     public void setName(String name) {
         this.name = name;
 
@@ -43,7 +47,7 @@ public abstract class BaseClass {
         double proteinRatio = nutrientsMap.get("protein");
         double fatRatio = nutrientsMap.get("fat");
 
-        this.energyDensity = (carbsRatio+proteinRatio)*4000+fatRatio*9000;
+        this.energyDensity = (carbsRatio + proteinRatio) * 4000 + fatRatio * 9000;
     }
 
     private double getEnergyDensity() {
@@ -65,7 +69,8 @@ public abstract class BaseClass {
     }
 
 
-    /** Recalculates the nutrientsMap() based on childMap and ratiosMap
+    /**
+     * Recalculates the nutrientsMap() based on childMap and ratiosMap
      * This method should be run if childMap has been updated.
      */
     protected void setNutrientsMap() {
@@ -84,7 +89,7 @@ public abstract class BaseClass {
 
             for (String nutrient : nutrients) {
                 nutrientsMap.merge(nutrient, baseClassNutrients.get(nutrient),
-                        (oldValue, newValue) -> (oldValue + newValue*ratio));
+                        (oldValue, newValue) -> (oldValue + newValue * ratio));
             }
         }
         setEnergyDensity();
@@ -94,6 +99,7 @@ public abstract class BaseClass {
     /**
      * Resizes the percentage hashmap values assuming all take equal space, so their sum is one.
      * If empty returned weight is 1.
+     *
      * @return the value of the new allocated space
      */
     protected double giveSpaceForAnotherEntry() {
@@ -117,10 +123,10 @@ public abstract class BaseClass {
      * <p>This method should be run if child is removed from childMap.</p>
      */
     protected void scaleEntriesOnRemoval(double weightedValue) {
-        double scaleFactor = 1/(1-weightedValue);
+        double scaleFactor = 1 / (1 - weightedValue);
         for (SafeID key : childMap.keySet()) {
             double value = childMap.get(key).getRatio();
-            childMap.get(key).setRatio(value*scaleFactor);
+            childMap.get(key).setRatio(value * scaleFactor);
         }
     }
 
@@ -133,13 +139,13 @@ public abstract class BaseClass {
         System.out.println();
         childMap.forEach((key, value) -> {
             System.out.printf("%10s |", value.getChild().getName());
-            System.out.printf(" ratio: " + "%5.1f %%", childMap.get(key).getRatio()*100);
-            if ( getClass() != Adventure.class) {
+            System.out.printf(" ratio: " + "%5.1f %%", childMap.get(key).getRatio() * 100);
+            if (getClass() != Adventure.class) {
                 System.out.printf(" | weight: " + "%5.1f g", childMap.get(key).getRecipeWeight());
             }
             Set<String> nutrients = childMap.get(key).getChild().getNutrientsMap().keySet();
             for (String nutrient : nutrients) {
-                System.out.printf( " | %s: %4.1f %%", nutrient, childMap.get(key).getChild().getNutrientsMap().get(nutrient)*100);
+                System.out.printf(" | %s: %4.1f %%", nutrient, childMap.get(key).getChild().getNutrientsMap().get(nutrient) * 100);
             }
             System.out.println();
         });
@@ -155,7 +161,7 @@ public abstract class BaseClass {
 
         System.out.printf(" ratio: " + "%5.1f %%", sum * 100);
 
-        if ( getClass() != Adventure.class) {
+        if (getClass() != Adventure.class) {
             sum = 0;
             for (SafeID id : children) {
                 sum += childMap.get(id).getRecipeWeight();
@@ -165,7 +171,7 @@ public abstract class BaseClass {
 
         Set<String> nutrients = getNutrientsMap().keySet();
         for (String nutrient : nutrients) {
-            System.out.printf( " | %s: %4.1f %%", nutrient, getNutrientsMap().get(nutrient)*100);
+            System.out.printf(" | %s: %4.1f %%", nutrient, getNutrientsMap().get(nutrient) * 100);
         }
         System.out.println();
         System.out.println();
@@ -175,9 +181,10 @@ public abstract class BaseClass {
 
     /**
      * Base method for putting new children and updating name index. See subclass for full method.
-     * @param newChild The new child to add.
+     *
+     * @param newChild         The new child to add.
      * @param newWeightedValue The weighted value of the child.
-     * @param absWeight The absolute weight of the child.
+     * @param absWeight        The absolute weight of the child.
      * @return SafeID key of newChild
      */
     protected SafeID putChild(BaseClass newChild, Double newWeightedValue, Double absWeight) {
@@ -192,7 +199,8 @@ public abstract class BaseClass {
     /**
      * Update the weighted value of an existing child.
      * The key must be present in childMap.
-     * @param key Key of the child to update.
+     *
+     * @param key              Key of the child to update.
      * @param newWeightedValue The new weighted value.
      * @throws IllegalArgumentException if the key is not present in childMap.
      */
@@ -209,7 +217,8 @@ public abstract class BaseClass {
     /**
      * Update the recipe weight of an existing child.
      * The key must be present in childMap.
-     * @param key Key of the child to update.
+     *
+     * @param key             Key of the child to update.
      * @param newRecipeWeight The new weighted value.
      * @throws IllegalArgumentException if the key is not present in childMap.
      */
@@ -226,7 +235,8 @@ public abstract class BaseClass {
     /**
      * Update the child of an existing ChildWrapper
      * The key must be present in childMap.
-     * @param key Key of the child to update.
+     *
+     * @param key      Key of the child to update.
      * @param newChild The new child object.
      * @throws IllegalArgumentException if the key is not present in childrenMap.
      */
@@ -244,6 +254,7 @@ public abstract class BaseClass {
 
     /**
      * Removes child using the name index, updates name index and scales the ratioMap so all children sum remains equal to 1.
+     *
      * @param name Name of the child to remove.
      */
     public String removeChild(String name) {
@@ -251,7 +262,7 @@ public abstract class BaseClass {
         if (key == null) {
             throw new NullPointerException("No child with that name.");
         } else {
-           return removeChild(key);
+            return removeChild(key);
         }
     }
 
