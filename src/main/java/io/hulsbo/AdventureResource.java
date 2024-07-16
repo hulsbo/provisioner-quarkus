@@ -26,6 +26,30 @@ public class AdventureResource {
 	@Inject
 	KCalCalculationStrategy kCalCalculationStrategy;
 
+	@Inject
+	@Location("adventureInfo.html")
+	Template adventureInfoTemplate;
+
+	@Inject
+	@Location("adventureList.html")
+	Template adventureList;
+
+	@Inject
+	@Location("adventureModal.html")
+	Template adventureModal;
+
+	@Inject
+	@Location("createCrewMemberModal.html")
+	Template createCrewMemberModal;
+
+	@Inject
+	@Location("adventureDashboard.html")
+	Template adventureDashboard;
+
+	@Inject
+	@Location("crewList.html")
+	Template crewList;
+
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	public Response createAdventure() {
@@ -40,9 +64,30 @@ public class AdventureResource {
 		return browseAdventures();
 	}
 
-	@Inject
-	@Location("adventureList.html")
-	Template adventureList;
+	@PUT
+	@Path("/{id}/input")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
+
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+
+		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
+			String key = entry.getKey();
+			String singleValue = entry.getValue().get(0);  // Assuming single value
+
+			switch (key) {
+				case "name" -> adventure.setName(singleValue);
+				case "days" -> adventure.setDays(Integer.parseInt(singleValue));
+				// Add more cases as needed
+				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
+			}
+		}
+
+		return Response.ok().build();
+	}
 
 	@GET
 	@Produces(MediaType.TEXT_HTML)
@@ -71,10 +116,6 @@ public class AdventureResource {
 		}
 	}
 
-	@Inject
-	@Location("adventureModal.html")
-	Template adventureModal;
-
 	@GET
 	@Path("/modal")
 	@Produces(MediaType.TEXT_HTML)
@@ -89,9 +130,6 @@ public class AdventureResource {
 		return Response.ok(componentInstance).build();
 	}
 
-	@Inject
-	@Location("createCrewMemberModal.html")
-	Template createCrewMemberModal;
 
 	@GET
 	@Path("/modal/crew-member-form")
@@ -107,10 +145,6 @@ public class AdventureResource {
 		return Response.ok(componentInstance).build();
 	}
 
-	@Inject
-	@Location("adventureInfo.html")
-	Template adventureInfoTemplate;
-
 	@GET
 	@Path("/info")
 	@Produces(MediaType.TEXT_HTML)
@@ -122,10 +156,6 @@ public class AdventureResource {
 		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
 		return Response.ok(renderedHtml).build();
 	}
-
-	@Inject
-	@Location("crewList.html")
-	Template crewList;
 
 	@GET
 	@Path("/{id}/crew")
@@ -144,35 +174,6 @@ public class AdventureResource {
 
 		return Response.ok(componentInstance).build();
 	}
-
-	@PUT
-	@Path("/{id}/input")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
-
-		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-		}
-
-		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
-			String key = entry.getKey();
-			String singleValue = entry.getValue().get(0);  // Assuming single value
-
-			switch (key) {
-				case "name" -> adventure.setName(singleValue);
-				case "days" -> adventure.setDays(Integer.parseInt(singleValue));
-				// Add more cases as needed
-				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
-			}
-		}
-
-		return Response.ok().build();
-	}
-
-	@Inject
-	@Location("adventureDashboard.html")
-	Template adventureDashboard;
 
 	@GET
 	@Path("/load")
@@ -211,6 +212,10 @@ public class AdventureResource {
 				template.getId().replace(".html", ""
 				));
 	}
+
+
+
+
 
 	@DELETE
 	@Path("/{id}/delete")
@@ -256,5 +261,4 @@ public class AdventureResource {
 					.build();
 		}
 	}
-
 }
