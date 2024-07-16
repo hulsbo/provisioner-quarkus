@@ -213,10 +213,6 @@ public class AdventureResource {
 				));
 	}
 
-
-
-
-
 	@DELETE
 	@Path("/{id}/delete")
 	@Produces(MediaType.TEXT_HTML)
