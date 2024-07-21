@@ -33,9 +33,9 @@ public class CrewMember {
         Manager.register(id, this);
     }
 
-    public double getDailyKCalNeed() {
+    public int getDailyKCalNeed() {
         double BMR = kCalCalculationStrategy.determineBMR(age, height, weight, gender);
-        return Math.round(kCalCalculationStrategy.determineKCal(BMR, activity));
+        return (int) kCalCalculationStrategy.determineKCal(BMR, activity);
     }
 
     public String getName() {
@@ -58,7 +58,7 @@ public class CrewMember {
         return weight;
     }
     public int getHeight() {
-        return weight;
+        return height;
     }
 
     public SafeID getId() {

@@ -99,7 +99,7 @@ public class Adventure extends BaseClass{
     }
 
     public void setCrewDailyKcalNeed() {
-        double sum = 0;
+        int sum = 0;
         for (CrewMember crewMember : crewMemberMap.values()) {
             sum += crewMember.getDailyKCalNeed();
         }
