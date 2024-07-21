@@ -2,6 +2,7 @@ package io.hulsbo;
 
 import io.hulsbo.model.Adventure;
 import io.hulsbo.model.Manager;
+import io.hulsbo.model.Meal;
 import io.hulsbo.util.model.CrewMember.Gender;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
@@ -46,9 +47,14 @@ public class AdventureResource {
 	@Location("adventureDashboard.html")
 	Template adventureDashboard;
 
-	@Inject
-	@Location("crewList.html")
-	Template crewList;
+//  NOTE: DEPRECATED, SEE GENERIC LIST.
+//	@Inject
+//	@Location("crewList.html")
+//	Template crewList;
+//
+//	@Inject
+//	@Location("mealsList.html")
+//	Template mealsList;
 
 	@POST
 	@Produces(MediaType.TEXT_HTML)
@@ -62,31 +68,6 @@ public class AdventureResource {
 		test.setDays((int) (1 + Math.random() * 10));
 
 		return browseAdventures();
-	}
-
-	@PUT
-	@Path("/{id}/input")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
-
-		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-		}
-
-		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
-			String key = entry.getKey();
-			String singleValue = entry.getValue().get(0);  // Assuming single value
-
-			switch (key) {
-				case "name" -> adventure.setName(singleValue);
-				case "days" -> adventure.setDays(Integer.parseInt(singleValue));
-				// Add more cases as needed
-				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
-			}
-		}
-
-		return Response.ok().build();
 	}
 
 	@GET
@@ -130,6 +111,17 @@ public class AdventureResource {
 		return Response.ok(componentInstance).build();
 	}
 
+	@GET
+	@Path("/info")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getAdventureInfo(@QueryParam("id") SafeID id) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+		if (adventure == null) {
+			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+		}
+		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
+		return Response.ok(renderedHtml).build();
+	}
 
 	@GET
 	@Path("/modal/crew-member-form")
@@ -145,35 +137,67 @@ public class AdventureResource {
 		return Response.ok(componentInstance).build();
 	}
 
-	@GET
-	@Path("/info")
-	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventureInfo(@QueryParam("id") SafeID id) {
-		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-		}
-		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
-		return Response.ok(renderedHtml).build();
-	}
+	@PUT
+	@Path("/{id}/input")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
 
-	@GET
-	@Path("/{id}/crew")
-	@Produces(MediaType.TEXT_HTML)
-	public Response getCrewList(@PathParam("id") SafeID id) {
 		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
 			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
 		}
 
-		// Render in Qute
-		String renderedHtml = crewList.data( "adventure", adventure).render();
+		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
+			String key = entry.getKey();
+			String singleValue = entry.getValue().get(0);  // Assuming single value
 
-		// Create component instance
-		String componentInstance = createComponentInstance(renderedHtml, crewList);
-
-		return Response.ok(componentInstance).build();
+			switch (key) {
+				case "name" -> adventure.setName(singleValue);
+				case "days" -> adventure.setDays(Integer.parseInt(singleValue));
+				// Add more cases as needed
+				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
+			}
+		}
+		String name = new Meal().getClass().getSimpleName();
+		return Response.ok().build();
 	}
+
+//  NOTE: DEPRECATED DUE TO GENERIC LIST CREATION.
+//	@GET
+//	@Path("/{id}/crew")
+//	@Produces(MediaType.TEXT_HTML)
+//	public Response getCrewList(@PathParam("id") SafeID id) {
+//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+//		if (adventure == null) {
+//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+//		}
+//
+//		// Render in Qute
+//		String renderedHtml = crewList.data( "adventure", adventure).render();
+//
+//		// Create component instance
+//		String componentInstance = createComponentInstance(renderedHtml, crewList);
+//
+//		return Response.ok(componentInstance).build();
+//	}
+
+//	@GET
+//	@Path("/{id}/meals")
+//	@Produces(MediaType.TEXT_HTML)
+//	public Response getMealsList(@PathParam("id") SafeID id) {
+//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+//		if (adventure == null) {
+//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+//		}
+//
+//		// Render in Qute
+//		String renderedHtml = mealsList.data( "adventure", adventure).render();
+//
+//		// Create component instance
+//		String componentInstance = createComponentInstance(renderedHtml, mealsList);
+//
+//		return Response.ok(componentInstance).build();
+//	}
 
 	@GET
 	@Path("/load")
