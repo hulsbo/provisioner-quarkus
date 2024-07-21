@@ -230,7 +230,7 @@ public class AdventureResource {
 		}
 	}
 
-	private String createComponentInstance(String renderedHtml, Template template) {
+	public static String createComponentInstance(String renderedHtml, Template template) {
 		return addInstanceClassAndIDs(
 				renderedHtml,
 				template.getId().replace(".html", ""
