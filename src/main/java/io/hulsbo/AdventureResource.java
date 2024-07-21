@@ -56,46 +56,43 @@ public class AdventureResource {
 //	@Location("mealsList.html")
 //	Template mealsList;
 
+	@Inject
+	UiResource uiResource;
+
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	public Response createAdventure() {
 		Adventure test = new Adventure(kCalCalculationStrategy);
-
-		test.putCrewMember("Oskar", 29, (int) (170 + Math.random()*10), 75,
-				Gender.MALE, PhysicalActivity.MODERATE , new HarrisBenedictOriginal());
-		test.putCrewMember("Lovisa", 31, (int) (160 + Math.random()*10), 75,
-				Gender.FEMALE, PhysicalActivity.VERY_HEAVY , new HarrisBenedictOriginal());
-		test.setDays((int) (1 + Math.random() * 10));
-
-		return browseAdventures();
+		return uiResource.getAdventureList();
 	}
 
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	public Response browseAdventures() {
-		try {
-			List<Adventure> adventures = Manager.getAllAdventures();
-
-			// Render in Qute
-			String renderedHtml = adventureList.data("adventures", adventures).render();
-
-			// Create component Instance
-			String renderedUniqueTemplate = createComponentInstance(renderedHtml, adventureList);
-
-			return Response
-					.ok(renderedUniqueTemplate)
-					.build();
-		} catch (Exception e) {
-			// Log the exception
-			e.printStackTrace();
-
-			// Return an error response
-			return Response
-					.status(Response.Status.INTERNAL_SERVER_ERROR)
-					.entity("<p>An error occurred while fetching adventures.</p>")
-					.build();
-		}
-	}
+//	DEPRECATED: SEE GENERIC LIST 	
+//	@GET
+//	@Produces(MediaType.TEXT_HTML)
+//	public Response browseAdventures() {
+//		try {
+//			List<Adventure> adventures = Manager.getAllAdventures();
+//
+//			// Render in Qute
+//			String renderedHtml = adventureList.data("adventures", adventures).render();
+//
+//			// Create component Instance
+//			String renderedUniqueTemplate = createComponentInstance(renderedHtml, adventureList);
+//
+//			return Response
+//					.ok(renderedUniqueTemplate)
+//					.build();
+//		} catch (Exception e) {
+//			// Log the exception
+//			e.printStackTrace();
+//
+//			// Return an error response
+//			return Response
+//					.status(Response.Status.INTERNAL_SERVER_ERROR)
+//					.entity("<p>An error occurred while fetching adventures.</p>")
+//					.build();
+//		}
+//	}
 
 	@GET
 	@Path("/modal")
