@@ -52,7 +52,7 @@
 
         .adventure-list-column {
             height: 600px;
-            min-width: 300px;
+            width: 100%;
             overflow-y: auto;
         }
 
@@ -119,11 +119,11 @@
             <div class="adventure-list-column" hx-get="/ui/list/adventures" hx-trigger="load">
                 <!-- Adventure list will be populated here -->
             </div>
-            <div class="adventure-modal-preview-column">
-                <div id="adventure-modal-preview">
-                    <!-- Adventure preview will be populated here -->
-                </div>
-            </div>
+            {!<div class="adventure-modal-preview-column">!}
+                {!<div id="adventure-modal-preview">!}
+                    {!<!-- Adventure preview will be populated here -->!}
+                {!</div>!}
+            {!</div>!}
         </div>
         {!Deprecated since generic list!}
         {!<div class="adventure-modal-footer">!}
