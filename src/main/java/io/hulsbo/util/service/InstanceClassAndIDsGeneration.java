@@ -106,7 +106,7 @@ public class InstanceClassAndIDsGeneration {
     public static String insertUniqueClassesToHtml(String html, String uniqueClassPrefix) {
 
         // Regex pattern to match HTML tags
-        Pattern pattern = Pattern.compile("<(\\w+)((?:\\s*[^=/>]+=\"[^\"]*\"\\s*)*)\\s*(/?)>");
+        Pattern pattern = Pattern.compile("<(\\w+)((?:\\s*[^=/>]+=(?:(?:\"[^\"]*\")|(?:'[^']*'))\\s*)*)\\s*(/?)>");
         StringBuffer result = new StringBuffer();
         Matcher matcher = pattern.matcher(html);
 
