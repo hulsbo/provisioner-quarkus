@@ -164,7 +164,7 @@
     }
 
     .list-edit-btn {
-        background-color: #4a4a4a;
+        background-color: rgba(0, 88, 135, 0.66);
     }
 
     .list-delete-btn {
@@ -231,22 +231,22 @@
                          alt="Remove"/>
                 </button>
             {/if}
+            {#if actions.get("add")}
+            <button class="list-action-button list-add-btn"
+                    hx-post="{actions.get("add")}"
+                    hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
+                    hx-select=".list-item-container"
+                    hx-target=".list-item-container"
+            >
+                <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
+            </button>
+            {/if}
             {#if actions.get("edit")}
                 <button class="list-action-button list-edit-btn"
                         hx-get="{actions.get("edit")}"
                         hx-target="#edit-modal"
                         hx-vals='{ "id": ""}'>
                     <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
-                </button>
-            {/if}
-            {#if actions.get("add")}
-                <button class="list-action-button list-add-btn"
-                        hx-post="{actions.get("add")}"
-                        hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: noParent}"}'
-                        hx-select=".list-item-container"
-                        hx-target=".list-item-container"
-                >
-                    <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
                 </button>
             {/if}
         </div>
