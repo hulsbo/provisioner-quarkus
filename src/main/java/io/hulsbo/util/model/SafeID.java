@@ -1,7 +1,5 @@
 package io.hulsbo.util.model;
 
-import io.hulsbo.util.model.SafeID;
-
 import static java.util.UUID.randomUUID;
 
 public class SafeID {
@@ -19,8 +17,9 @@ public class SafeID {
 
     // Static factory method to generate a new SafeID from a String
     public static SafeID fromString(String id) {
-        checkIDValidity(id);
-        return new SafeID(id);
+        if (isValidSafeID(id)) {
+            return new SafeID(id);
+        } else return null;
     }
 
     // Static factory method to generate a new SafeID
@@ -33,22 +32,24 @@ public class SafeID {
         String prefix = "id_"; // Ensures the ID starts with a letter
         String safeIdCandidate = prefix + randomUUID().toString().replace("-", "_");
         try {
-            checkIDValidity(safeIdCandidate);
+            if (!isValidSafeID(safeIdCandidate)) {
+                throw new IllegalArgumentException(safeIdCandidate + " is not a valid safe ID." );
+            };
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Retrying generateSafeId(): ");
+            System.out.println("Retrying generateSafeId()...");
             return generateSafeId();
         }
         return safeIdCandidate;
     }
 
     /**
-     * Method to validate ID, throws <code>IllegalArgumentException</code> if not valid.
+     * Method to validate ID, is false if not valid.
      */
-    private static void checkIDValidity(String id) {
+    private static boolean isValidSafeID(String id) {
         if (!id.matches("[a-zA-Z][a-zA-Z0-9_]*")) {
-            throw new IllegalArgumentException("Invalid ID format");
-        }
+            return false;
+        } else return true;
     }
 
     // Override toString to return the ID value
