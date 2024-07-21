@@ -40,7 +40,7 @@ public class MockResource {
 
             adventure.setName("Salad days");
 
-            adventure.putCrewMember("Oskar", 25, 186, 75, MALE, MODERATE, new HarrisBenedictOriginal());
+            adventure.putCrewMember("Oskar", 29, 186, 75, MALE, MODERATE, new HarrisBenedictOriginal());
 
             Meal meal = new Meal();
 
