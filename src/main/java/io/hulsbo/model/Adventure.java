@@ -12,9 +12,7 @@ import java.util.stream.Collectors;
 public class Adventure extends BaseClass{
     private final Map<SafeID, CrewMember> crewMemberMap = new LinkedHashMap<>();
     private double crewDailyKcalNeed;
-    private double weight;
     private int days;
-    private final Map<SafeID, Double> mealWeights = new LinkedHashMap<>(); // NOTE: This one uses not ChildMap keys.
     private final Map<SafeID, Double> ingredientWeights = new LinkedHashMap<>();
     private final KCalCalculationStrategy kCalCalculationStrategy;
 
@@ -34,33 +32,13 @@ public class Adventure extends BaseClass{
         }
     }
 
-    public double getWeight() {
-        return weight;
-    }
-
-    public Map<SafeID, Double> getMealWeights() {
-        return mealWeights;
-    }
-
-    private void setMealWeights() { // refer to setIngredientWeights() for complete update.
-
-        mealWeights.clear();
-
-        Set<SafeID> keys = childMap.keySet();
-        for (SafeID key : keys) {
-            // NOTE: To be consistent with ingredientWeights, we here use the id of the Meal object itself.
-            SafeID mealKey = childMap.get(key).getChild().getId();
-            mealWeights.put(mealKey, weight*childMap.get(key).getRatio());
-        }
-    }
-
     public void setMealAndIngredientWeights() {
 
         ingredientWeights.clear();
 
-        setMealWeights(); // Ingredient weights depends on an updated mealWeights field.
+        setChildWeights(); // Ingredient weights depends on an updated childWeights field.
 
-        Set<SafeID> mealKeys = mealWeights.keySet();
+        Set<SafeID> mealKeys = childWeights.keySet();
 
         for (SafeID mealKey : mealKeys) { // For each meal, calculate its child ingredients weights and save in ingredientWeights.
 
@@ -70,7 +48,7 @@ public class Adventure extends BaseClass{
 
             for (SafeID ingredientKey : ingredientKeys) {
                 // NOTE: Since there's no direct connection to this object and the ingredient, we use the id of the ingredient itself.
-                ingredientWeights.put(ingredientKey, mealWeights.get(mealKey)*mealIngredients.get(ingredientKey).getRatio());
+                ingredientWeights.put(ingredientKey, childWeights.get(mealKey)*mealIngredients.get(ingredientKey).getRatio());
             }
         }
     }
@@ -150,7 +128,7 @@ public class Adventure extends BaseClass{
             for (String nutrient : nutrients) {
                 System.out.printf( " | %s: %4.1f %%", nutrient, childMap.get(key).getChild().getNutrientsMap().get(nutrient)*100);
             }
-            System.out.printf(" | calc. weight: " + "%4.2f kg", mealWeights.get(childMap.get(key).getChild().getId()));
+            System.out.printf(" | calc. weight: " + "%4.2f kg", childWeights.get(childMap.get(key).getChild().getId()));
             System.out.println();
             System.out.println();
             // For adventures, also sum each ingredient for each meal
@@ -203,15 +181,6 @@ public class Adventure extends BaseClass{
     // NOTE: Used in template.
     public int getCrewDailyKcalNeed() {
         return (int) crewDailyKcalNeed;
-    }
-
-    // NOTE: Used in template.
-    public Map<SafeID, ChildWrapper> getChildMap() {
-        return childMap;
-    }
-    // NOTE: Used in template.
-    public String getFormattedEnergyDensity() {
-        return String.format("%.1f%%", energyDensity);
     }
 
     // NOTE: Used in template.
