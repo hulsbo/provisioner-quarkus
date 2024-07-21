@@ -297,4 +297,39 @@ public abstract class BaseClass {
         }
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
+   public List<ChildWrapper> getAllChildren() {
+        return new ArrayList<>(childMap.values());
+    }
+
+    // NOTE: Used in template.
+    public Map<SafeID, ChildWrapper> getChildMap() {
+        return childMap;
+    }
+
+    // NOTE: Used in template.
+    public String getFormattedEnergyDensity() {
+        return String.format(Locale.US, "%.1f", energyDensity);
+    }
+
+    // NOTE: Used in template
+    public Map<SafeID, Double> getChildWeights() {
+        return childWeights;
+    }
+
+    protected void setChildWeights() { // refer to setIngredientWeights() in Adventure.java for complete update.
+
+        childWeights.clear();
+
+        Set<SafeID> keys = childMap.keySet();
+        for (SafeID key : keys) {
+            // NOTE: To be consistent with ingredientWeights, we here use the id of the Meal object itself.
+            SafeID mealKey = childMap.get(key).getChild().getId();
+            childWeights.put(mealKey, weight*childMap.get(key).getRatio());
+        }
+    }
+
 }
