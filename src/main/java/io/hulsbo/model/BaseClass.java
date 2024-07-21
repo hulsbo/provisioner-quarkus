@@ -4,15 +4,14 @@ import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.model.baseclass.ChildWrapper;
 import io.hulsbo.util.model.baseclass.NutrientsMap;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class BaseClass {
     protected final NutrientsMap nutrientsMap = new NutrientsMap();
     protected final Map<SafeID, ChildWrapper> childMap = new LinkedHashMap<>();
+    protected final Map<SafeID, Double> childWeights = new LinkedHashMap<>(); // NOTE: This one uses not ChildMap keys.
     protected final Map<String, SafeID> nameIndex = new HashMap<>();
+    protected double weight;
     private final SafeID id;
     protected double energyDensity;
     private String name;
