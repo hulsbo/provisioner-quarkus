@@ -40,8 +40,8 @@ public class UiResource {
 
         Map<String, String> actions = Map.of(
                 "add", "/adventures/",
-                "edit", "/adventures/{id}",
-                "remove", "/adventures/{id}"
+                "edit", "/adventures/",
+                "remove", "/adventures/"
         );
 
         // Render in Qute

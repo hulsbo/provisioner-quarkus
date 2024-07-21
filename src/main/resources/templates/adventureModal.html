@@ -116,7 +116,7 @@
             </button>
         </div>
         <div class="adventure-modal-body">
-            <div class="adventure-list-column" hx-get="/adventures" hx-trigger="load from:#adventure-modal-container">
+            <div class="adventure-list-column" hx-get="/ui/list/adventures" hx-trigger="load">
                 <!-- Adventure list will be populated here -->
             </div>
             <div class="adventure-modal-preview-column">
@@ -125,18 +125,19 @@
                 </div>
             </div>
         </div>
-        <div class="adventure-modal-footer">
-            <button class="adventure-modal-button create" hx-post="/adventures" hx-trigger="click"
-                    hx-target=".adventure-list-column">
-                Create New Adventure
-            </button>
-            <button class="adventure-modal-button load"
-                    hx-get="/adventures/load"
-                    hx-vals="js:\{id: document.querySelector('.adventure-list-column .buffer').value \}"
-                    hx-trigger="click"
-                    hx-target="body">
-                Load Adventure
-            </button>
-        </div>
+        {!Deprecated since generic list!}
+        {!<div class="adventure-modal-footer">!}
+            {!<button class="adventure-modal-button create" hx-post="/adventures" hx-trigger="click"!}
+                    {!hx-target=".adventure-list-column">!}
+                {!Create New Adventure!}
+            {!</button>!}
+            {!<button class="adventure-modal-button load"!}
+                    {!hx-get="/adventures/load"!}
+                    {!hx-vals="js:\{id: document.querySelector('.adventure-list-column .buffer').value \}"!}
+                    {!hx-trigger="click"!}
+                    {!hx-target="body">!}
+                {!Load Adventure!}
+            {!</button>!}
+        {!</div>!}
     </div>
 </div>

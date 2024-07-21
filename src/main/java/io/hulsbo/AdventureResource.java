@@ -66,7 +66,7 @@ public class AdventureResource {
 		return uiResource.getAdventureList();
 	}
 
-//	DEPRECATED: SEE GENERIC LIST 	
+//	DEPRECATED: SEE GENERIC LIST
 //	@GET
 //	@Produces(MediaType.TEXT_HTML)
 //	public Response browseAdventures() {
@@ -197,7 +197,6 @@ public class AdventureResource {
 //	}
 
 	@GET
-	@Path("/load")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getAdventure(@QueryParam("id") SafeID id) {
 		try {
@@ -235,9 +234,8 @@ public class AdventureResource {
 	}
 
 	@DELETE
-	@Path("/{id}/delete")
 	@Produces(MediaType.TEXT_HTML)
-	public Response deleteAdventure(@PathParam("id") SafeID id) {
+	public Response deleteAdventure(@FormParam("id") SafeID id) {
 		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
 			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);

@@ -52,15 +52,11 @@
         <div class="column-header">name</div>
         <div class="column-header">weight</div>
         <div class="column-header">KCal/Kg</div>
-        <div class="column-header">crew size</div>
-        <div class="column-header">duration</div>
     {/fragment}
     {#fragment id=columnsAdventure rendered=false}
         <div class="column-value">{item.name}</div>
         <div class="column-value">{item.weight}kg</div>
         <div class="column-value">{item.formattedEnergyDensity}</div>
-        <div class="column-value">{item.crewSize}</div>
-        <div class="column-value">{item.days} days</div>
     {/fragment}
     <!-- meal -->
     {#fragment id=headersMeal rendered=false}
@@ -235,19 +231,27 @@
             <button class="list-action-button list-add-btn"
                     hx-post="{actions.get("add")}"
                     hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
-                    hx-select=".list-item-container"
-                    hx-target=".list-item-container"
+                    hx-target=".list"
+                    hx-swap="outerHTML"
             >
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
             </button>
             {/if}
-            {#if actions.get("edit")}
+            {#if actions.get("edit") && type == 'adventure'}
                 <button class="list-action-button list-edit-btn"
                         hx-get="{actions.get("edit")}"
-                        hx-target="#edit-modal"
+                        hx-target="body"
                         hx-vals='{ "id": ""}'>
                     <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
                 </button>
+            {/if}
+            {#if actions.get("edit") && type != 'adventure'}
+            <button class="list-action-button list-edit-btn"
+                    hx-get="{actions.get("edit")}"
+                    hx-target="#edit-modal"
+                    hx-vals='{ "id": ""}'>
+                <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
+            </button>
             {/if}
         </div>
     </footer>
