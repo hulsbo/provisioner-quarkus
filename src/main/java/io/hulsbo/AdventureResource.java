@@ -1,12 +1,7 @@
 package io.hulsbo;
 
-import io.hulsbo.model.Adventure;
-import io.hulsbo.model.Manager;
-import io.hulsbo.model.Meal;
-import io.hulsbo.util.model.CrewMember.Gender;
-import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
+import io.hulsbo.model.*;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
-import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.service.StackTraceFormatter;
 import io.quarkus.qute.Location;
@@ -21,7 +16,7 @@ import java.util.*;
 
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
-@Path("/adventures")
+@Path("/adventures") // TODO: Make Adventures into generic resource for all types.
 public class AdventureResource {
 
 	@Inject
@@ -61,8 +56,67 @@ public class AdventureResource {
 
 	@POST
 	@Produces(MediaType.TEXT_HTML)
-	public Response createAdventure() {
+	public Response createAdventure(@FormParam("type") String type, @FormParam("parentId") String parentId) {
+
+		// Common checks for crewMember, meal, and ingredient
+		if (Arrays.asList("crewMember", "meal", "ingredient").contains(type)) {
+
+			if (parentId == null) {
+				throw new WebApplicationException("Parent ID is required for creating a " + type, Response.Status.BAD_REQUEST);
+			}
+
+			BaseClass parent = null;
+
+			try {
+				parent = Manager.getBaseClass(SafeID.fromString(parentId));
+			} catch (Exception e) {
+				throw new WebApplicationException("Error retrieving parent object: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+			}
+
+		}
+
+
+		// TODO: Finish POST for all types.
+		try {
+			switch (type) {
+				case "crewMember" -> {
+					Adventure parentAdventure = (Adventure) parent;
+					CrewMember newCrewMember = new CrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
+					parentAdventure.putCrewMember();
+					yield newCrewMember;
+				}
+				case "meal" -> {
+					Adventure parentAdventure = (Adventure) parent;
+					Meal newMeal = new Meal();
+					newMeal.setName(name);
+					parentAdventure.putChild(newMeal);
+					yield newMeal;
+				}
+				case "ingredient" -> {
+					Meal parentMeal = (Meal) parent;
+					Ingredient newIngredient = new Ingredient();
+					newIngredient.setName(name);
+					parentMeal.putChild(newIngredient);
+					yield newIngredient;
+				}
+				case "adventure" -> {
+					Adventure newAdventure = new Adventure(kCalCalculationStrategy);
+					newAdventure.setName(name);
+					yield newAdventure;
+				}
+				default -> throw new WebApplicationException("Invalid type: " + type, Response.Status.BAD_REQUEST);
+			}
+		} catch (ClassCastException e) {
+			throw new WebApplicationException("Invalid parent type for " + type, Response.Status.BAD_REQUEST);
+		} catch (Exception e) {
+			throw new WebApplicationException("Error creating " + type + ": " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+		}
+
+
+
 		Adventure test = new Adventure(kCalCalculationStrategy);
+
+
 		return uiResource.getAdventureList();
 	}
 
@@ -233,47 +287,56 @@ public class AdventureResource {
 				));
 	}
 
-	@DELETE
-	@Produces(MediaType.TEXT_HTML)
-	public Response deleteAdventure(@FormParam("id") SafeID id) {
-		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-		}
-		try {
-			String response = Manager.removeBaseClassObject(id);
-			return Response.status(Response.Status.NO_CONTENT).header("success-info", response).build();
-		}
-		catch(Exception exception) {
-			// Log the exception
-			exception.printStackTrace();
+//  DEPRECATED FOR GENERIC DELETE ENDPOINT SEE BELOW
+//	@DELETE
+//	@Produces(MediaType.TEXT_HTML)
+//	public Response deleteAdventure(@FormParam("id") SafeID id) {
+//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
+//		if (adventure == null) {
+//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+//		}
+//		try {
+//			String response = Manager.removeBaseClassObject(id);
+//			return Response.status(Response.Status.NO_CONTENT).header("success-info", response).build();
+//		}
+//		catch(Exception exception) {
+//			// Log the exception
+//			exception.printStackTrace();
+//
+//			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//					.entity(StackTraceFormatter.formatStackTrace(exception))
+//					.build();
+//		}
+//	}
 
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-					.entity(StackTraceFormatter.formatStackTrace(exception))
-					.build();
-		}
-	}
-
 	@DELETE
-	@Path("{adventureId}/crew/{crewMemberId}")
-	public Response deleteObject(@PathParam("adventureId") SafeID adventureId, @PathParam("crewMemberId") SafeID crewMemberId) {
-		Adventure adventure = (Adventure) Manager.getBaseClass(adventureId);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-		}
+	public Response deleteObject(
+			@FormParam("parentId") SafeID parentId,
+			@FormParam("id") SafeID id,
+			@FormParam("type") String type) {
+
+		String response = "";
+
 		try {
-			String response = adventure.removeCrewMember(crewMemberId);
-			// TODO: Replace with another call on client - side to path /adventures,
-			//  to make this delete method generic for all BaseClass objects/components.
-			return Response.ok(response).build();
+			if (type.equals("crewmember")) {
+				Adventure parent = (Adventure) Manager.getBaseClass(parentId);
+				response = parent.removeCrewMember(id);
+			} else if (Arrays.asList("meal", "ingredient").contains(type)) {
+				BaseClass parent = Manager.getBaseClass(parentId);
+				response = parent.removeChild(id);
+			} else if (type.equals("adventure")) {
+				response = Manager.removeBaseClassObject(id);
+			}
+			System.out.println(response);
+			return Response.status(Response.Status.OK).header("success-info", response).build();
 		}
-		catch(Exception exception) {
-			// Log the exception
-			exception.printStackTrace();
+			catch(Exception exception) {
+				// Log the exception
+				exception.printStackTrace();
 
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 					.entity(exception)
 					.build();
-		}
+			}
 	}
 }

@@ -1,6 +1,6 @@
 
 {#fragment id=li rendered=false}
-        <div class="list-item" tabindex="0" id="{id}"
+        <div class="list-item focusable" tabindex="0" id="{id}"
              hx-on--after-on-load="
         event.detail.successful
         && event.detail.elt == this.closest('.list').querySelector('.list-delete-btn')
@@ -12,8 +12,8 @@
         if (buffer.value != '{id}') {
             buffer.value = '{id}';
             htmx.trigger(buffer, 'valueChanged');
-            if (editBtn) editBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
-            if (deleteBtn) deleteBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
+            // if (editBtn) editBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
+            // if (deleteBtn) deleteBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
         }
         ">
 
@@ -217,44 +217,36 @@
             </div>
 
     <footer>
-        {!TODO: Modify hx-vals to be dynamic and based on focused list item, include also parentId if any,
-        and modify the endpoint to delete the object at the parent, NOT via Manager (UNLESS Adventure) !}
+        {!TODO: Create generic edit endpoint using type. !}
         <div class="list-action-container">
             {#if actions.get("remove")}
-                <button class="list-action-button list-delete-btn"
+                <button class="list-action-button list-delete-btn preserveFocusedClass" tabindex="0"
                         hx-delete="{actions.get("remove")}"
                         hx-confirm="Are you sure you want to delete this item?"
-                        hx-vals='{ "id": ""}'>
+                        hx-vals='js:{ type: "{type}", id: document.querySelector(".focused").getAttribute("id"), parentId: "{parent.id ?: "null"}" }'
+                        hx-target=".focused"
+                        hx-swap="outerHTML"
+                        >
                     <img width="25" height="25" class="icon" src="/icons/minus.svg"
                          alt="Remove"/>
                 </button>
             {/if}
             {#if actions.get("add")}
-            <button class="list-action-button list-add-btn"
+            <button class="list-action-button list-add-btn preserveFocusedClass"
                     hx-post="{actions.get("add")}"
                     hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
                     hx-target=".list"
                     hx-swap="outerHTML"
             >
+            {/if}
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
             </button>
-            {/if}
-            {#if actions.get("edit") && type == 'adventure'}
-                <button class="list-action-button list-edit-btn"
-                        hx-get="{actions.get("edit")}"
-                        hx-target="body"
-                        hx-vals='{ "id": ""}'>
-                    <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
-                </button>
-            {/if}
-            {#if actions.get("edit") && type != 'adventure'}
             <button class="list-action-button list-edit-btn"
                     hx-get="{actions.get("edit")}"
-                    hx-target="#edit-modal"
-                    hx-vals='{ "id": ""}'>
+                    hx-target="{type == 'adventure' ? 'body' : '#edit-modal'}"
+                    hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
             </button>
-            {/if}
         </div>
     </footer>
     <input class="buffer" style="display: none" id="list-buffer"/>

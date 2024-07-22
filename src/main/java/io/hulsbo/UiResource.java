@@ -94,8 +94,8 @@ public class UiResource {
 
                 items = ((Adventure) parent).getAllCrewMembers();
                 actions = Map.of(
-                        "add", "/adventures/" + parentId + "/crewmember",
-                        "remove", "/adventures/" + parentId + "/crewmember/{childId}"
+                        "add", "/adventures/",
+                        "remove", "/adventures/"
                 );
                 break;
 
@@ -106,9 +106,9 @@ public class UiResource {
 
                 items = parent.getAllChildren();
                 actions = Map.of(
-                        "add", "/adventures/" + parentId + "/meal",
-                        "edit", "/adventures/" + parentId + "/meal/{childId}",
-                        "remove", "/adventures/" + parentId + "/meal/{childId}"
+                        "add", "/adventures/",
+                        "edit", "/adventures/",
+                        "remove", "/adventures/"
                 );
                 break;
 
@@ -119,9 +119,9 @@ public class UiResource {
 
                 items = parent.getAllChildren();
                 actions = Map.of(
-                        "add", "/meal/" + parentId + "/ingredient",
-                        "edit", "/meal/" + parentId + "/ingredient/{childId}",
-                        "remove", "/meal/" + parentId + "/ingredient/{childId}"
+                        "add", "/adventures/",
+                        "edit", "/adventures/",
+                        "remove", "/adventures/"
                 );
                 break;
 
