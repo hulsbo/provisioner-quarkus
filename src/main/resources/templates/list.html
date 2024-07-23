@@ -238,17 +238,21 @@
                     hx-target=".list"
                     hx-swap="outerHTML"
             >
-            {/if}
+
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
             </button>
+            {/if}
+            {#if actions.get("edit")}
             <button class="list-action-button list-edit-btn"
                     hx-get="{actions.get("edit")}"
-                    hx-target="{type == 'adventure' ? 'body' : '#edit-modal'}"
+                    hx-target="{type == 'adventure' ? 'body' : '__lid_editModal__'}"
                     hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
             </button>
+            {/if}
         </div>
     </footer>
+    <div id="__lid_editModal__"></div>
     <input class="buffer" style="display: none" id="list-buffer"/>
     {#if items.isEmpty()}
         <p>No {type} items found. Try creating one.</p>
