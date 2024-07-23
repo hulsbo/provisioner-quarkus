@@ -232,8 +232,9 @@
                 </button>
             {/if}
             {#if actions.get("add")}
+
             <button class="list-action-button list-add-btn preserveFocusedClass"
-                    hx-post="{actions.get("add")}"
+                    hx-{type.equals('crewmember') ? 'get' : 'post'}="{actions.get('add')}"
                     hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
                     hx-target=".list"
                     hx-swap="outerHTML"
@@ -245,7 +246,7 @@
             {#if actions.get("edit")}
             <button class="list-action-button list-edit-btn"
                     hx-get="{actions.get("edit")}"
-                    hx-target="{type == 'adventure' ? 'body' : '__lid_editModal__'}"
+                    hx-target="{type.equals('adventure') ? 'body' : '__lid_editModal__'}"
                     hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
             </button>
