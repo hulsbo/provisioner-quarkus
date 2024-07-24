@@ -69,7 +69,7 @@ public class Adventure extends BaseClass{
         return super.putChild(newMeal, weightedValue, 0.0);
     }
 
-    public void putCrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
+    public void putCrewMember(String name, int age, int height, int weight, String gender, String activity, String kCalCalculationStrategy) {
         CrewMember newCrewMember = new CrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
         crewMemberMap.put(newCrewMember.getId() , newCrewMember);
         // NOTE: Registration in Manager is done in constructor.

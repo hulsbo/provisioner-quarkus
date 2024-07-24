@@ -24,11 +24,35 @@ public class UiResource {
     @Location("list.html")
     Template listTemplate;
 
+    @Inject
+    @Location("createCrewMemberModal.html")
+    Template createCrewMemberModal;
+
     @GET
     @Path("/clear")
     @Produces(MediaType.TEXT_HTML)
     public Response returnModal() {
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/modal/crew-member-form")
+    @Produces(MediaType.TEXT_HTML)
+    public Response openCreateCrewMemberModal(
+            @QueryParam("parentId") String parentId,
+            @QueryParam("type") String type
+    ) {
+
+        // Get parent
+        Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+
+        // Render in Qute
+        String renderedHtml = createCrewMemberModal.data("adventure", adventure, "type", type).render();
+
+        // Create component instance
+        String componentInstance = createComponentInstance(renderedHtml, createCrewMemberModal);
+
+        return Response.ok(componentInstance).build();
     }
 
     @GET
@@ -94,7 +118,7 @@ public class UiResource {
 
                 items = ((Adventure) parent).getAllCrewMembers();
                 actions = Map.of(
-                        "add", "/adventures/",
+                        "add", "ui/modal/crew-member-form",
                         "remove", "/adventures/"
                 );
                 break;

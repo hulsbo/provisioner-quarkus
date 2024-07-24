@@ -236,7 +236,7 @@
             <button class="list-action-button list-add-btn preserveFocusedClass"
                     hx-{type.equals('crewmember') ? 'get' : 'post'}="{actions.get('add')}"
                     hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
-                    hx-target=".list"
+                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : '.list'}"
                     hx-swap="outerHTML"
             >
 
@@ -246,14 +246,14 @@
             {#if actions.get("edit")}
             <button class="list-action-button list-edit-btn"
                     hx-get="{actions.get("edit")}"
-                    hx-target="{type.equals('adventure') ? 'body' : '__lid_editModal__'}"
+                    hx-target="{type.equals('adventure') ? 'body' : '#__lid_modal__'}"
                     hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
             </button>
             {/if}
         </div>
     </footer>
-    <div id="__lid_editModal__"></div>
+    <div id="__lid_modal__"></div>
     <input class="buffer" style="display: none" id="list-buffer"/>
     {#if items.isEmpty()}
         <p>No {type} items found. Try creating one.</p>

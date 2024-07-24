@@ -101,18 +101,25 @@
            opacity: 0.8;
         }
 
-
     </style>
     <div class="content">
         <div class="header">
-            <h2 class="title">Create Crew Member</h2>
+            <h2 class="title">New Crew Member for {adventure.name}</h2>
             <button class="close"
                     hx-on--before-request="htmx.remove(htmx.find('#crew-member-form')); event.preventDefault();"
                     hx-get="foo"
                     hx-trigger="click, keyup[event.key == 'Escape'] from:document">&times;</button>
         </div>
         <div class="body">
-            <form id="create-crew-member-form" hx-post="/adventure/crew_member" hx-target="#crew-member-form">
+            <div class="crew-member-form-group">
+
+            </div>
+            <form id="create-crew-member-form"
+                  hx-post="/adventures"
+                  hx-vals='{ "type": "{type}", "parentId": "{adventure.id}" }'
+                  {! NOTE: closest .list should suffice since this modals element reside inside .list !}
+                  hx-target="closest .list"
+                  hx-swap="outerHTML">
                 <div class="crew-member-form-group">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required>
@@ -140,15 +147,15 @@
                     <label for="activity">Physical Activity:</label>
                     <select id="activity" name="activity" required>
                         <option value="SEDENTARY">Sedentary</option>
-                        <option value="LIGHT">Light</option>
+                        <option value="MILD">Mild</option>
                         <option value="MODERATE">Moderate</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="VERY_ACTIVE">Very Active</option>
+                        <option value="HEAVY">Heavy</option>
+                        <option value="VERY_HEAVY">Very Heavy</option>
                     </select>
                 </div>
                 <div class="crew-member-form-group">
                     <label for="kCalStrategy">KCal Calculation Strategy:</label>
-                    <select id="kCalStrategy" name="kCalCalculationStrategy" required>
+                    <select id="kCalStrategy" name="strategy" required>
                         <option value="HARRIS_BENEDICT_ORIGINAL">Harris-Benedict Original</option>
                         <option value="HARRIS_BENEDICT_REVISED">Harris-Benedict Revised</option>
                         <option value="MIFFLIN_ST_JEOR">Mifflin-St Jeor</option>

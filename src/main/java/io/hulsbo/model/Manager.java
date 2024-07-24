@@ -32,6 +32,8 @@ public class Manager {
         return parents;
     }
 
+
+//    TODO: Add parameter stating what Class is expected, or make getter for each one.
     public static BaseClass getBaseClass(SafeID id) {
         return baseClassIndex.get(id);
     }

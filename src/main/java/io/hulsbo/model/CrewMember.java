@@ -1,7 +1,10 @@
 package io.hulsbo.model;
 
 import io.hulsbo.util.model.CrewMember.Gender;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictOriginal;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.HarrisBenedictRevised;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
+import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.MifflinStJeor;
 import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 
 import io.hulsbo.util.model.SafeID;
@@ -20,16 +23,25 @@ public class CrewMember {
         return kCalCalculationStrategy;
     }
 
-    public CrewMember(String name, int age, int height, int weight, Gender gender, PhysicalActivity activity, KCalCalculationStrategy kCalCalculationStrategy) {
+    public CrewMember(String name, int age, int height, int weight, String gender, String activity, String strategy) {
+
         SafeID id = SafeID.randomSafeID();
+
+        KCalCalculationStrategy someStrategy = switch (strategy.toLowerCase()) {
+            case "harris_benedict_original" -> new HarrisBenedictOriginal();
+            case "harris_benedict_revised" -> new HarrisBenedictRevised();
+            case "mifflin_st_jeor" -> new MifflinStJeor();
+            default -> throw new IllegalArgumentException("Unknown strategy: " + strategy);
+        };
+
         this.safeId = id;
         this.name = name;
         this.age = age;
         this.height = height;
         this.weight = weight;
-        this.gender = gender;
-        this.activity = activity;
-        this.kCalCalculationStrategy = kCalCalculationStrategy;
+        this.gender = Gender.valueOf(gender.toUpperCase());
+        this.activity = PhysicalActivity.valueOf(activity.toUpperCase());
+        this.kCalCalculationStrategy = someStrategy;
         Manager.register(id, this);
     }
 

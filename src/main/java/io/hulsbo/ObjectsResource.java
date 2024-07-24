@@ -56,54 +56,51 @@ public class AdventureResource {
 
 	@POST
 	@Produces(MediaType.TEXT_HTML)
-	public Response createAdventure(@FormParam("type") String type, @FormParam("parentId") String parentId) {
+	public Response createObject(
+//			General
+			@FormParam("type") String type,
+			@FormParam("parentId") String parentId,
+//			Create Crew Member Parameters
+			@FormParam("name") String name,
+			@FormParam("age") String age,
+			@FormParam("height") String height,
+			@FormParam("weight") String weight,
+			@FormParam("gender") String gender,
+			@FormParam("activity") String activity,
+			@FormParam("strategy") String strategy
+			) {
 
-		// Common checks for crewMember, meal, and ingredient
-		if (Arrays.asList("crewMember", "meal", "ingredient").contains(type)) {
-
-			if (parentId == null) {
+		if (Arrays.asList("crewmember", "meal", "ingredient").contains(type) && parentId == null) {
 				throw new WebApplicationException("Parent ID is required for creating a " + type, Response.Status.BAD_REQUEST);
-			}
-
-			BaseClass parent = null;
-
-			try {
-				parent = Manager.getBaseClass(SafeID.fromString(parentId));
-			} catch (Exception e) {
-				throw new WebApplicationException("Error retrieving parent object: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
-			}
-
 		}
-
 
 		// TODO: Finish POST for all types.
 		try {
 			switch (type) {
-				case "crewMember" -> {
-					Adventure parentAdventure = (Adventure) parent;
-					CrewMember newCrewMember = new CrewMember(name, age, height, weight, gender, activity, kCalCalculationStrategy);
-					parentAdventure.putCrewMember();
-					yield newCrewMember;
+				case "crewmember" -> {
+					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+					CrewMember newCrewMember = new CrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
+					parent.putCrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
 				}
-				case "meal" -> {
-					Adventure parentAdventure = (Adventure) parent;
-					Meal newMeal = new Meal();
-					newMeal.setName(name);
-					parentAdventure.putChild(newMeal);
-					yield newMeal;
-				}
-				case "ingredient" -> {
-					Meal parentMeal = (Meal) parent;
-					Ingredient newIngredient = new Ingredient();
-					newIngredient.setName(name);
-					parentMeal.putChild(newIngredient);
-					yield newIngredient;
-				}
-				case "adventure" -> {
-					Adventure newAdventure = new Adventure(kCalCalculationStrategy);
-					newAdventure.setName(name);
-					yield newAdventure;
-				}
+//				case "meal" -> {
+//					Adventure parentAdventure = (Adventure) parent;
+//					Meal newMeal = new Meal();
+//					newMeal.setName(name);
+//					parentAdventure.putChild(newMeal);
+//					yield newMeal;
+//				}
+//				case "ingredient" -> {
+//					Meal parentMeal = (Meal) parent;
+//					Ingredient newIngredient = new Ingredient();
+//					newIngredient.setName(name);
+//					parentMeal.putChild(newIngredient);
+//					yield newIngredient;
+//				}
+//				case "adventure" -> {
+//					Adventure newAdventure = new Adventure(kCalCalculationStrategy);
+//					newAdventure.setName(name);
+//					yield newAdventure;
+//				}
 				default -> throw new WebApplicationException("Invalid type: " + type, Response.Status.BAD_REQUEST);
 			}
 		} catch (ClassCastException e) {
@@ -112,12 +109,7 @@ public class AdventureResource {
 			throw new WebApplicationException("Error creating " + type + ": " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
 		}
 
-
-
-		Adventure test = new Adventure(kCalCalculationStrategy);
-
-
-		return uiResource.getAdventureList();
+		return uiResource.getList(parentId, type);
 	}
 
 //	DEPRECATED: SEE GENERIC LIST
