@@ -232,11 +232,10 @@
                 </button>
             {/if}
             {#if actions.get("add")}
-
             <button class="list-action-button list-add-btn preserveFocusedClass"
                     hx-{type.equals('crewmember') ? 'get' : 'post'}="{actions.get('add')}"
                     hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
-                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : '.list'}"
+                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest .list'}" <!-- TODO: Solve targetError AND <style> element duplication at laod of list (check all list types for that error)
                     hx-swap="outerHTML"
             >
 
