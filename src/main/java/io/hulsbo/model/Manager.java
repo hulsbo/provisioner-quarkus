@@ -70,12 +70,14 @@ public class Manager {
         return baseClassIndex.values().stream()
                 .filter(obj -> obj instanceof Adventure)
                 .map(obj -> (Adventure) obj)
+                .sorted(Comparator.comparing(Adventure::getCreationTime))
                 .collect(Collectors.toList());
     }
 
     public static <T extends BaseClass> List<T> getAllOf(Class<T> subclass) {
         return baseClassIndex.values().stream()
                 .filter(subclass::isInstance)
+                .sorted(Comparator.comparing(BaseClass::getCreationTime))
                 .map(subclass::cast)
                 .collect(Collectors.toList());
     }

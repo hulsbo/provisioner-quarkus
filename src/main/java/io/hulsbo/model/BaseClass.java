@@ -4,7 +4,10 @@ import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.model.baseclass.ChildWrapper;
 import io.hulsbo.util.model.baseclass.NutrientsMap;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class BaseClass {
     protected final NutrientsMap nutrientsMap = new NutrientsMap();
@@ -15,8 +18,10 @@ public abstract class BaseClass {
     private final SafeID id;
     protected double energyDensity;
     private String name;
+    protected final OffsetDateTime creationTime;
 
     public BaseClass() {
+        this.creationTime = OffsetDateTime.now(ZoneOffset.ofHours(2));
         SafeID id = SafeID.randomSafeID();
         this.id = id;
         this.name = "Unnamed " + getClass().getSimpleName();
@@ -301,8 +306,22 @@ public abstract class BaseClass {
         return weight;
     }
 
+    /**
+     * Get creation time in UTC+2 time.
+     * @return OffsetDateTime
+     */
+    public OffsetDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    /**
+     * Get all children, sorted from oldest to newest.
+     * @return List<ChildWrapper>
+     */
    public List<ChildWrapper> getAllChildren() {
-        return new ArrayList<>(childMap.values());
+        return childMap.values().stream()
+                .sorted(Comparator.comparing(wrapper -> wrapper.getChild().getCreationTime()))
+                .collect(Collectors.toList());
     }
 
     // NOTE: Used in template.

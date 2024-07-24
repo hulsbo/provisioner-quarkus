@@ -9,6 +9,9 @@ import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 
 import io.hulsbo.util.model.SafeID;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
 public class CrewMember {
     private final SafeID safeId;
     private final String name;
@@ -18,7 +21,7 @@ public class CrewMember {
     private final Gender gender;
     private final PhysicalActivity activity;
     private final KCalCalculationStrategy kCalCalculationStrategy;
-
+    private final OffsetDateTime creationTime;
     public KCalCalculationStrategy getkCalCalculationStrategy() {
         return kCalCalculationStrategy;
     }
@@ -33,7 +36,7 @@ public class CrewMember {
             case "mifflin_st_jeor" -> new MifflinStJeor();
             default -> throw new IllegalArgumentException("Unknown strategy: " + strategy);
         };
-
+        this.creationTime = OffsetDateTime.now(ZoneOffset.ofHours(2));
         this.safeId = id;
         this.name = name;
         this.age = age;
@@ -75,6 +78,10 @@ public class CrewMember {
 
     public SafeID getId() {
         return safeId;
+    }
+
+    public OffsetDateTime getCreationTime() {
+        return creationTime;
     }
 
     // Getters and setters if needed
