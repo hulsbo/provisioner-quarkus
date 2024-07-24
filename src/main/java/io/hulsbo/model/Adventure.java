@@ -173,8 +173,15 @@ public class Adventure extends BaseClass{
         return crewMemberMap.size();
     }
     // NOTE: Used in template.
+
+    /**
+     * Get all crew members of this adventure, sorted from oldest to newest in creation time.
+     * @return List<CrewMember>
+     */
     public List<CrewMember> getAllCrewMembers() {
-        return new ArrayList<>(crewMemberMap.values());
+        return crewMemberMap.values().stream()
+                .sorted(Comparator.comparing(CrewMember::getCreationTime))
+                .collect(Collectors.toList());
     }
 
     // NOTE: Used in template.
