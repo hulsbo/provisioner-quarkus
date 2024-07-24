@@ -3,7 +3,6 @@ package io.hulsbo;
 import io.hulsbo.model.*;
 import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
 import io.hulsbo.util.model.SafeID;
-import io.hulsbo.util.service.StackTraceFormatter;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import jakarta.inject.Inject;
@@ -17,7 +16,7 @@ import java.util.*;
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
 @Path("/adventures") // TODO: Make Adventures into generic resource for all types.
-public class AdventureResource {
+public class ObjectsResource {
 
 	@Inject
 	KCalCalculationStrategy kCalCalculationStrategy;
@@ -81,26 +80,24 @@ public class AdventureResource {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
 					CrewMember newCrewMember = new CrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
 					parent.putCrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
+					return uiResource.getList(parentId, type);
 				}
-//				case "meal" -> {
-//					Adventure parentAdventure = (Adventure) parent;
-//					Meal newMeal = new Meal();
-//					newMeal.setName(name);
-//					parentAdventure.putChild(newMeal);
-//					yield newMeal;
-//				}
-//				case "ingredient" -> {
-//					Meal parentMeal = (Meal) parent;
-//					Ingredient newIngredient = new Ingredient();
-//					newIngredient.setName(name);
-//					parentMeal.putChild(newIngredient);
-//					yield newIngredient;
-//				}
-//				case "adventure" -> {
-//					Adventure newAdventure = new Adventure(kCalCalculationStrategy);
-//					newAdventure.setName(name);
-//					yield newAdventure;
-//				}
+				case "meal" -> {
+					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+					Meal newMeal = new Meal();
+					parent.putChild(newMeal);
+					return uiResource.getList(parentId, type);
+				}
+				case "ingredient" -> {
+					Meal parent = (Meal) Manager.getBaseClass(SafeID.fromString(parentId));
+					Ingredient newIngredient = new Ingredient();
+					parent.putChild(newIngredient);
+					return uiResource.getList(parentId, type);
+				}
+				case "adventure" -> {
+					Adventure newAdventure = new Adventure();
+					return uiResource.getAdventureList();
+				}
 				default -> throw new WebApplicationException("Invalid type: " + type, Response.Status.BAD_REQUEST);
 			}
 		} catch (ClassCastException e) {
@@ -109,7 +106,6 @@ public class AdventureResource {
 			throw new WebApplicationException("Error creating " + type + ": " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
 		}
 
-		return uiResource.getList(parentId, type);
 	}
 
 //	DEPRECATED: SEE GENERIC LIST
@@ -164,20 +160,6 @@ public class AdventureResource {
 		}
 		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
 		return Response.ok(renderedHtml).build();
-	}
-
-	@GET
-	@Path("/modal/crew-member-form")
-	@Produces(MediaType.TEXT_HTML)
-	public Response openCreateCrewMemberModal() {
-
-		// Render in Qute
-		String renderedHtml = createCrewMemberModal.render();
-
-		// Create component instance
-		String componentInstance = createComponentInstance(renderedHtml, createCrewMemberModal);
-
-		return Response.ok(componentInstance).build();
 	}
 
 	@PUT

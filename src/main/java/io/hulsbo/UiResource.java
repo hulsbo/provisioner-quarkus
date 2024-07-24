@@ -1,4 +1,5 @@
 package io.hulsbo;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.hulsbo.model.Adventure;
 import io.hulsbo.model.BaseClass;
 import io.hulsbo.model.Manager;
@@ -13,7 +14,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
-import static io.hulsbo.AdventureResource.createComponentInstance;
+import static io.hulsbo.ObjectsResource.createComponentInstance;
 
 @Path("/ui")
 public class UiResource {
