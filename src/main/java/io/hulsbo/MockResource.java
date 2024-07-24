@@ -36,7 +36,7 @@ public class MockResource {
     @Produces(MediaType.TEXT_HTML)
     public Response getAdventure(@QueryParam("id") SafeID id) {
         try {
-            Adventure adventure = new Adventure(new HarrisBenedictOriginal());
+            Adventure adventure = new Adventure();
 
             adventure.setName("Salad days");
 

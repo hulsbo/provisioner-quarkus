@@ -14,10 +14,9 @@ public class Adventure extends BaseClass{
     private double crewDailyKcalNeed;
     private int days;
     private final Map<SafeID, Double> ingredientWeights = new LinkedHashMap<>();
-    private final KCalCalculationStrategy kCalCalculationStrategy;
 
-    public Adventure(KCalCalculationStrategy calcStrategy) {
-        this.kCalCalculationStrategy = calcStrategy;
+    public Adventure() {
+
     }
 
     @Override
