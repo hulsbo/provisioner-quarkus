@@ -1,7 +1,6 @@
 package io.hulsbo;
 
 import io.hulsbo.model.*;
-import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
 import io.hulsbo.util.model.SafeID;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -15,40 +14,20 @@ import java.util.*;
 
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
-@Path("/adventures") // TODO: Make Adventures into generic resource for all types.
+@Path("/adventures")
 public class ObjectsResource {
-
-	@Inject
-	KCalCalculationStrategy kCalCalculationStrategy;
 
 	@Inject
 	@Location("adventureInfo.html")
 	Template adventureInfoTemplate;
 
 	@Inject
-	@Location("adventureList.html")
-	Template adventureList;
-
-	@Inject
 	@Location("adventureModal.html")
 	Template adventureModal;
 
 	@Inject
-	@Location("createCrewMemberModal.html")
-	Template createCrewMemberModal;
-
-	@Inject
 	@Location("adventureDashboard.html")
 	Template adventureDashboard;
-
-//  NOTE: DEPRECATED, SEE GENERIC LIST.
-//	@Inject
-//	@Location("crewList.html")
-//	Template crewList;
-//
-//	@Inject
-//	@Location("mealsList.html")
-//	Template mealsList;
 
 	@Inject
 	UiResource uiResource;
@@ -56,10 +35,10 @@ public class ObjectsResource {
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	public Response createObject(
-//			General
+			// General
 			@FormParam("type") String type,
 			@FormParam("parentId") String parentId,
-//			Create Crew Member Parameters
+			//	Create Crew Member Parameters
 			@FormParam("name") String name,
 			@FormParam("age") String age,
 			@FormParam("height") String height,
@@ -73,12 +52,10 @@ public class ObjectsResource {
 				throw new WebApplicationException("Parent ID is required for creating a " + type, Response.Status.BAD_REQUEST);
 		}
 
-		// TODO: Finish POST for all types.
 		try {
 			switch (type) {
 				case "crewmember" -> {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
-					CrewMember newCrewMember = new CrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
 					parent.putCrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
 					return uiResource.getList(parentId, type);
 				}
@@ -95,7 +72,7 @@ public class ObjectsResource {
 					return uiResource.getList(parentId, type);
 				}
 				case "adventure" -> {
-					Adventure newAdventure = new Adventure();
+					new Adventure();
 					return uiResource.getAdventureList();
 				}
 				default -> throw new WebApplicationException("Invalid type: " + type, Response.Status.BAD_REQUEST);
@@ -107,34 +84,6 @@ public class ObjectsResource {
 		}
 
 	}
-
-//	DEPRECATED: SEE GENERIC LIST
-//	@GET
-//	@Produces(MediaType.TEXT_HTML)
-//	public Response browseAdventures() {
-//		try {
-//			List<Adventure> adventures = Manager.getAllAdventures();
-//
-//			// Render in Qute
-//			String renderedHtml = adventureList.data("adventures", adventures).render();
-//
-//			// Create component Instance
-//			String renderedUniqueTemplate = createComponentInstance(renderedHtml, adventureList);
-//
-//			return Response
-//					.ok(renderedUniqueTemplate)
-//					.build();
-//		} catch (Exception e) {
-//			// Log the exception
-//			e.printStackTrace();
-//
-//			// Return an error response
-//			return Response
-//					.status(Response.Status.INTERNAL_SERVER_ERROR)
-//					.entity("<p>An error occurred while fetching adventures.</p>")
-//					.build();
-//		}
-//	}
 
 	@GET
 	@Path("/modal")
@@ -187,43 +136,6 @@ public class ObjectsResource {
 		return Response.ok().build();
 	}
 
-//  NOTE: DEPRECATED DUE TO GENERIC LIST CREATION.
-//	@GET
-//	@Path("/{id}/crew")
-//	@Produces(MediaType.TEXT_HTML)
-//	public Response getCrewList(@PathParam("id") SafeID id) {
-//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-//		if (adventure == null) {
-//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-//		}
-//
-//		// Render in Qute
-//		String renderedHtml = crewList.data( "adventure", adventure).render();
-//
-//		// Create component instance
-//		String componentInstance = createComponentInstance(renderedHtml, crewList);
-//
-//		return Response.ok(componentInstance).build();
-//	}
-
-//	@GET
-//	@Path("/{id}/meals")
-//	@Produces(MediaType.TEXT_HTML)
-//	public Response getMealsList(@PathParam("id") SafeID id) {
-//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-//		if (adventure == null) {
-//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-//		}
-//
-//		// Render in Qute
-//		String renderedHtml = mealsList.data( "adventure", adventure).render();
-//
-//		// Create component instance
-//		String componentInstance = createComponentInstance(renderedHtml, mealsList);
-//
-//		return Response.ok(componentInstance).build();
-//	}
-
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response getAdventure(@QueryParam("id") SafeID id) {
@@ -260,28 +172,6 @@ public class ObjectsResource {
 				template.getId().replace(".html", ""
 				));
 	}
-
-//  DEPRECATED FOR GENERIC DELETE ENDPOINT SEE BELOW
-//	@DELETE
-//	@Produces(MediaType.TEXT_HTML)
-//	public Response deleteAdventure(@FormParam("id") SafeID id) {
-//		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-//		if (adventure == null) {
-//			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
-//		}
-//		try {
-//			String response = Manager.removeBaseClassObject(id);
-//			return Response.status(Response.Status.NO_CONTENT).header("success-info", response).build();
-//		}
-//		catch(Exception exception) {
-//			// Log the exception
-//			exception.printStackTrace();
-//
-//			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//					.entity(StackTraceFormatter.formatStackTrace(exception))
-//					.build();
-//		}
-//	}
 
 	@DELETE
 	public Response deleteObject(

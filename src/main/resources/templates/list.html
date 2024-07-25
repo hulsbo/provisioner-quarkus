@@ -1,19 +1,15 @@
 
 {#fragment id=li rendered=false}
-        <div class="list-item focusable" tabindex="0" id="{id}"
+        <div class="item focusable" tabindex="0" id="{id}"
              hx-on--after-on-load="
         event.detail.successful
-        && event.detail.elt == this.closest('.list').querySelector('.list-delete-btn')
+        && event.detail.elt == this.closest('.__lid_list__').querySelector('delete-btn')
         && htmx.remove(this)"
              hx-on-click="
-        const buffer = this.closest('.list').querySelector('#list-buffer');
-        const editBtn = this.closest('.list').querySelector('.list-edit-btn');
-        const deleteBtn = this.closest('.list').querySelector('.list-delete-btn');
+        const buffer = this.closest('.__lid_list__').querySelector('#__lid_buffer__');
         if (buffer.value != '{id}') {
             buffer.value = '{id}';
             htmx.trigger(buffer, 'valueChanged');
-            // if (editBtn) editBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
-            // if (deleteBtn) deleteBtn.setAttribute('hx-vals', JSON.stringify({ id: '{id}' }));
         }
         ">
 
@@ -81,102 +77,97 @@
         <div class="column-value">{item.FormattedEnergyDensity}</div>
     {/fragment}
 
-<style>
-    .list {
-        display: block;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background-color: #ffffff;
-        border: 1px solid #a9c3c7;
-        border-radius: 5px;
-        cursor: pointer;
-    }
 
-    .table-header {
-        background: #dcd0c0;
-        border-radius: 5px 5px 0 0;
-        padding: 10px;
-        font-weight: bold;
-        cursor: default;
-        border-bottom: #ccc 1.5px solid;
-    }
 
-    .label {
-        text-align: center;
-        padding: 0.2em;
-        background-color: inherit;
-    }
+<div class="__lid_list__">
+    <style>
+        .__lid_list__ {
+            display: block;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+            border: 1px solid #a9c3c7;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .column-headers-container {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-    }
+        .table-header {
+            background: #dcd0c0;
+            border-radius: 5px 5px 0 0;
+            padding: 10px;
+            font-weight: bold;
+            cursor: default;
+            border-bottom: #ccc 1.5px solid;
+        }
 
-    .list-item {
-        display: flex;
-        flex-direction: row;
-        padding: 10px;
-        border-top: 1px solid #ccc;
-        justify-content: space-between;
-        transition: background-color 0.1s;
-    }
+        .column-headers-container {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+        }
 
-    .column-header, .column-value {
-        flex: 0 0 50px;
-        text-align: center;
-    }
+        .item {
+            display: flex;
+            flex-direction: row;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            justify-content: space-between;
+            transition: background-color 0.1s;
+        }
 
-    .list-item:hover {
-        background-color: #e1e6e7;
-    }
+        .column-header, .column-value {
+            flex: 0 0 50px;
+            text-align: center;
+        }
 
-    .list-item:focus {
-        background-color: #a9c3c7;
-        outline: none;
-    }
+        .item:hover {
+            background-color: #e1e6e7;
+        }
 
-    .list-action-container {
-        display: flex;
-        justify-content: flex-end;
-    }
+        .item:focus {
+            background-color: #a9c3c7;
+            outline: none;
+        }
 
-    .list-action-button {
-        padding: 3px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, opacity 0.3s;
-        margin: 7px 0px;
-        margin-right: 7px;
-    }
+        .action-container {
+            display: flex;
+            justify-content: flex-end;
+        }
 
-    .list-action-button:hover {
-        opacity: 0.8;
-    }
+        .action-button {
+            padding: 3px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+            margin: 7px 0px;
+            margin-right: 7px;
+        }
 
-    .list-add-btn {
-        background-color: #4a4a4a;
-    }
+        .action-button:hover {
+            opacity: 0.8;
+        }
 
-    .list-edit-btn {
-        background-color: rgba(0, 88, 135, 0.66);
-    }
+        .add-btn {
+            background-color: #4a4a4a;
+        }
 
-    .list-delete-btn {
-        background-color: #f44336;
-    }
+        .edit-btn {
+            background-color: rgba(0, 88, 135, 0.66);
+        }
 
-    .list footer {
-        border-top: #ccc 1.5px solid;
-    }
+        .delete-btn {
+            background-color: #f44336;
+        }
 
-    .buffer {
-        display: none;
-    }
-</style>
+        .footer {
+            border-top: #ccc 1.5px solid;
+        }
 
-<div class="list">
+        .buffer {
+            display: none;
+        }
+    </style>
         <div class="table-header">
 
         <!-- Headers -->
@@ -195,7 +186,7 @@
     </div>
 
     <!-- Items, with or without ChildWrapper -->
-            <div class="list-item-container">
+            <div class="container">
                 <!-- with -->
                 {#if type != 'crewmember' && type != 'adventure' }
 
@@ -216,11 +207,10 @@
                 {/if}
             </div>
 
-    <footer>
-        {!TODO: Create generic edit endpoint using type. !}
-        <div class="list-action-container">
+    <footer class="footer">
+        <div class="action-container">
             {#if actions.get("remove")}
-                <button class="list-action-button list-delete-btn preserveFocusedClass" tabindex="0"
+                <button class="action-button delete-btn preserveFocusedClass" tabindex="0"
                         hx-delete="{actions.get("remove")}"
                         hx-confirm="Are you sure you want to delete this item?"
                         hx-vals='js:{ type: "{type}", id: document.querySelector(".focused").getAttribute("id"), parentId: "{parent.id ?: "null"}" }'
@@ -232,18 +222,18 @@
                 </button>
             {/if}
             {#if actions.get("add")}
-            <button class="list-action-button list-add-btn preserveFocusedClass"
+            <button class="action-button add-btn preserveFocusedClass"
                     hx-{type.equals('crewmember') ? 'get' : 'post'}="{actions.get('add')}"
-                    hx-vals='{ "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
-                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest .list'}" <!-- TODO: Solve targetError AND <style> element duplication at laod of list (check all list types for that error)
-                    hx-swap="outerHTML"
+                    hx-vals='{ "callerId": "__lid_list__", "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
+                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest .__lid_list__'}"
+                    hx-swap="innerHTML"
             >
 
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
             </button>
             {/if}
             {#if actions.get("edit")}
-            <button class="list-action-button list-edit-btn"
+            <button class="action-button edit-btn"
                     hx-get="{actions.get("edit")}"
                     hx-target="{type.equals('adventure') ? 'body' : '#__lid_modal__'}"
                     hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
@@ -253,7 +243,7 @@
         </div>
     </footer>
     <div id="__lid_modal__"></div>
-    <input class="buffer" style="display: none" id="list-buffer"/>
+    <input class="buffer" style="display: none" id="__lid_buffer__"/>
     {#if items.isEmpty()}
         <p>No {type} items found. Try creating one.</p>
     {/if}

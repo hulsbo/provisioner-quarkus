@@ -117,8 +117,7 @@
             <form id="create-crew-member-form"
                   hx-post="/adventures"
                   hx-vals='{ "type": "{type}", "parentId": "{adventure.id}" }'
-                  {! NOTE: closest .list should suffice since this modals element reside inside .list !}
-                  hx-target="closest .list"
+                  hx-target="closest .{callerId}"
                   hx-swap="outerHTML">
                 <div class="crew-member-form-group">
                     <label for="name">Name:</label>

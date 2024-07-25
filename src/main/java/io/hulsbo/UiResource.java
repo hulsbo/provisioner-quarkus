@@ -1,5 +1,4 @@
 package io.hulsbo;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import io.hulsbo.model.Adventure;
 import io.hulsbo.model.BaseClass;
 import io.hulsbo.model.Manager;
@@ -39,14 +38,15 @@ public class UiResource {
     @Produces(MediaType.TEXT_HTML)
     public Response openCreateCrewMemberModal(
             @QueryParam("parentId") String parentId,
-            @QueryParam("type") String type
+            @QueryParam("type") String type,
+            @QueryParam("callerId") String callerId
     ) {
 
         // Get parent
         Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
 
         // Render in Qute
-        String renderedHtml = createCrewMemberModal.data("adventure", adventure, "type", type).render();
+        String renderedHtml = createCrewMemberModal.data("adventure", adventure, "type", type, "callerId", callerId ).render();
 
         // Create component instance
         String componentInstance = createComponentInstance(renderedHtml, createCrewMemberModal);
@@ -105,7 +105,6 @@ public class UiResource {
         }
 
         List<?> items;
-        List<String> columns;
         Map<String, String> actions;
 
         switch (type.toLowerCase()) {
