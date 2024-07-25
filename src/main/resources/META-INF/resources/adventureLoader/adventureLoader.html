@@ -22,14 +22,14 @@
 				<prov-button text="Click Me" type="default" hx-get="/some-endpoint" hx-trigger="prov-button-click"
 					hx-target="#some-target">
 				</prov-button>
-				<button id="create-adventure-btn" hx-post="/adventures" hx-target="#adventure-result"
+				<button id="create-adventure-btn" hx-post="/objects" hx-target="#adventure-result"
 					hx-swap="innerHTML">
 					CREATE ADVENTURE
 				</button>
 				<div id="adventure-result"></div>
 				<div class="existing-adventures">
 					<h2>Load existing Adventure</h2>
-					<div id="adventure-list" hx-get="/adventures" hx-trigger="load">
+					<div id="adventure-list" hx-get="/objects" hx-trigger="load">
 						<!-- More adventures will be dynamically added here -->
 					</div>
 					<button id="load-adventure-btn">LOAD</button>

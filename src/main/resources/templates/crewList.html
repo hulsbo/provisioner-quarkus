@@ -147,7 +147,7 @@
 		{#for crewMember in adventure.getAllCrewMembers()}
 		<div class="crew-list-item" tabindex="0" id="{crewMember.id}"
 			 onclick="document.querySelector('#__lid_p1__ #listItemBuffer').textContent = '{crewMember.id}';"
-			 hx-get="/adventures/{adventure.id}/crew"
+			 hx-get="/objects/{adventure.id}/crew"
 			 hx-trigger="click[document.querySelector('.adventure-modal-preview') !== null]"
 			 hx-target="#adventure-modal-preview">
 			<span class="crew-list-item-name">{crewMember.name}</span>
@@ -157,11 +157,11 @@
 		<footer>
 			<div class="crew-member-action-container">
 				<button id="delete-crew-btn" class="crew-member-action-button"
-						hx-get="/adventures/modal/crew-member-form">
+						hx-get="/objects/modal/crew-member-form">
 					<span><img width="25" height="25" class="icon" src="/icons/removePerson.svg" alt="Remove"/></span>
 				</button>
 				<button id="add-crew-btn" class="crew-member-action-button"
-						hx-get="/adventures/modal/crew-member-form" hx-target=".crewMemberFormModal"
+						hx-get="/objects/modal/crew-member-form" hx-target=".crewMemberFormModal"
 						hx-swap="innerHtml">
 					<img width="25" height="25" class="icon" src="/icons/addPerson.svg" alt="Add"/></span></button>
 			</div>

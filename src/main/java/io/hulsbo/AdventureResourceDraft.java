@@ -11,7 +11,7 @@
 //import io.hulsbo.util.CrewMember.KCalCalculationStrategies.KCalCalculationStrategy;
 //import io.hulsbo.util.CrewMember.PhysicalActivity;
 //
-//@Path("/adventures")
+//@Path("/objects")
 //@Produces(MediaType.APPLICATION_JSON)
 //@Consumes(MediaType.APPLICATION_JSON)
 //public class AdventureResourceDraft {

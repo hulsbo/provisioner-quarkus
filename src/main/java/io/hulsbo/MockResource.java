@@ -18,7 +18,7 @@ import static io.hulsbo.util.model.CrewMember.Gender.MALE;
 import static io.hulsbo.util.model.CrewMember.PhysicalActivity.MODERATE;
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
-@Path("/mock/adventures")
+@Path("/mock/objects")
 public class MockResource {
     @Inject
     @Location("adventureDashboard.html")

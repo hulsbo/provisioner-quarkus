@@ -14,7 +14,7 @@ import java.util.*;
 
 import static io.hulsbo.util.service.InstanceClassAndIDsGeneration.addInstanceClassAndIDs;
 
-@Path("/adventures")
+@Path("/objects")
 public class ObjectsResource {
 
 	@Inject

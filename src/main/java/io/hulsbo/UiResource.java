@@ -55,16 +55,16 @@ public class UiResource {
     }
 
     @GET
-    @Path("/list/adventures")
+    @Path("/list/objects")
     @Produces(MediaType.TEXT_HTML)
     public Response getAdventureList() {
 
         List<Adventure> adventures = Manager.getAllAdventures();
 
         Map<String, String> actions = Map.of(
-                "add", "/adventures/",
-                "edit", "/adventures/",
-                "remove", "/adventures/"
+                "add", "/objects/",
+                "edit", "/objects/",
+                "remove", "/objects/"
         );
 
         // Render in Qute
@@ -117,7 +117,7 @@ public class UiResource {
                 items = ((Adventure) parent).getAllCrewMembers();
                 actions = Map.of(
                         "add", "ui/modal/crew-member-form",
-                        "remove", "/adventures/"
+                        "remove", "/objects/"
                 );
                 break;
 
@@ -128,9 +128,9 @@ public class UiResource {
 
                 items = parent.getAllChildren();
                 actions = Map.of(
-                        "add", "/adventures/",
-                        "edit", "/adventures/",
-                        "remove", "/adventures/"
+                        "add", "/objects/",
+                        "edit", "/objects/",
+                        "remove", "/objects/"
                 );
                 break;
 
@@ -141,9 +141,9 @@ public class UiResource {
 
                 items = parent.getAllChildren();
                 actions = Map.of(
-                        "add", "/adventures/",
-                        "edit", "/adventures/",
-                        "remove", "/adventures/"
+                        "add", "/objects/",
+                        "edit", "/objects/",
+                        "remove", "/objects/"
                 );
                 break;
 

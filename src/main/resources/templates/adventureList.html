@@ -111,7 +111,7 @@
 			<span class="adventure-list-item-name">{adventure.name}</span>
 			<span class="adventure-list-item-days">{adventure.days} days</span>
 			<button class="adventure-list-delete-btn"
-					hx-delete="/adventures/{adventure.id}/delete"
+					hx-delete="/objects/{adventure.id}/delete"
 					onclick="event.stopPropagation();"
 					hx-target=".adventure-list-item#{adventure.id}" hx-swap="outerHTML">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
