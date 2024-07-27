@@ -55,7 +55,7 @@ public class UiResource {
     }
 
     @GET
-    @Path("/list/objects")
+    @Path("/list/adventures")
     @Produces(MediaType.TEXT_HTML)
     public Response getAdventureList() {
 
