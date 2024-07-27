@@ -3,10 +3,10 @@
         <div class="item focusable" tabindex="0" id="{id}"
              hx-on--after-on-load="
         event.detail.successful
-        && event.detail.elt == this.closest('.__lid_list__').querySelector('delete-btn')
+        && event.detail.elt == this.closest('.list').querySelector('delete-btn')
         && htmx.remove(this)"
              hx-on-click="
-        const buffer = this.closest('.__lid_list__').querySelector('#__lid_buffer__');
+        const buffer = this.closest('.list').querySelector('#__lid_buffer__');
         if (buffer.value != '{id}') {
             buffer.value = '{id}';
             htmx.trigger(buffer, 'valueChanged');
@@ -93,19 +93,21 @@
             cursor: pointer;
         }
 
-        .table-header {
-            background: #dcd0c0;
-            border-radius: 5px 5px 0 0;
-            padding: 10px;
-            font-weight: bold;
-            cursor: default;
-            border-bottom: #ccc 1.5px solid;
+        .main-content {
+            flex:1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Hide overflow on main-content */
         }
 
         .column-headers-container {
             display: flex;
             justify-content: space-between;
             flex-direction: row;
+        }
+
+        .items {
+           overflow-y: auto;
         }
 
         .item {
@@ -170,7 +172,9 @@
             display: none;
         }
     </style>
-        <div class="table-header">
+
+
+    <div class="main-content">
 
         <!-- Headers -->
         <div class="column-headers-container">
@@ -185,29 +189,37 @@
                     {#include $headersIngredient /}
             {/switch}
         </div>
+
+        <!-- Items, with or without ChildWrapper -->
+        <div class="items">
+            <!-- with -->
+            {#if type != 'crewmember' && type != 'adventure' }
+
+            {#for item in items}
+                {#with item.getChild()}
+                    {#include $li item=this /}
+                {/with}
+            {/for}
+
+            <!-- without -->
+            {#else}
+
+                {#for item in items}
+                    {#with item}
+                        {#include $li item=this /}
+                    {/with}
+                {/for}
+            {/if}
+
+            {#if items.isEmpty()}
+                <p>No {type} items found. Try creating one.</p>
+            {/if}
+
+        </div>
+
     </div>
 
-    <!-- Items, with or without ChildWrapper -->
-            <div class="container">
-                <!-- with -->
-                {#if type != 'crewmember' && type != 'adventure' }
 
-                    {#for item in items}
-                        {#with item.getChild()}
-                            {#include $li item=this /}
-                        {/with}
-                    {/for}
-
-                <!-- without -->
-                {#else}
-
-                    {#for item in items}
-                        {#with item}
-                            {#include $li item=this /}
-                        {/with}
-                    {/for}
-                {/if}
-            </div>
 
     <footer class="footer">
         <div class="action-container">
@@ -246,7 +258,4 @@
     </footer>
     <div id="__lid_modal__"></div>
     <input class="buffer" style="display: none" id="__lid_buffer__"/>
-    {#if items.isEmpty()}
-        <p>No {type} items found. Try creating one.</p>
-    {/if}
 </div>
