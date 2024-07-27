@@ -227,9 +227,8 @@
             <button class="action-button add-btn preserveFocusedClass"
                     hx-{type.equals('crewmember') ? 'get' : 'post'}="{actions.get('add')}"
                     hx-vals='{ "callerId": "__lid_list__", "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
-                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest .__lid_list__'}"
-                    hx-swap="innerHTML"
                     hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest #__lid_list__'}"
+                    hx-swap="{type.equals('crewmember') ? 'innerHTML' : 'outerHTML'}"
             >
 
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
