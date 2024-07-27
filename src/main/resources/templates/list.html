@@ -79,10 +79,12 @@
 
 
 
-<div class="__lid_list__">
+<div class="list" id="__lid_list__">
     <style>
-        .__lid_list__ {
-            display: block;
+        .list {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
             font-family: Arial, sans-serif;
             margin: 0;
             background-color: #ffffff;
@@ -227,6 +229,7 @@
                     hx-vals='{ "callerId": "__lid_list__", "type": "{type}", "parentId": "{parent.id ?: "noParent"}"}'
                     hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest .__lid_list__'}"
                     hx-swap="innerHTML"
+                    hx-target="{type.equals('crewmember') ? '#__lid_modal__' : 'closest #__lid_list__'}"
             >
 
                 <img width="25" height="25" class="icon" src="/icons/plus.svg" alt="Add"/>
