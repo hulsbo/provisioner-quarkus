@@ -53,58 +53,8 @@
         .adventure-list-column {
             height: 600px;
             width: 100%;
-            overflow-y: auto;
         }
 
-        .adventure-modal-preview-column {
-            flex: 1;
-            height: 600px;
-            overflow-y: auto;
-        }
-
-        .adventure-modal-preview {
-            border-left: 1px solid #ccc;
-            height: 100%;
-            margin-left: auto;
-            padding-left: 10px;
-        }
-
-        .adventure-modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .adventure-modal-button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.1s;
-        }
-
-        .adventure-modal-button.load {
-            background-color: #4CAF50;
-            color: white;
-            margin-left: auto;
-        }
-
-        .adventure-modal-button.load[disabled="true"] {
-            background-color: silver;
-            color: white;
-            margin-left: auto;
-            cursor: inherit;
-        }
-
-        .adventure-modal-button.create {
-            background-color: #2196F3;
-            color: white;
-            margin-right: auto;
-        }
-
-        .adventure-modal-button:hover {
-            opacity: 0.8;
-        }
     </style>
     <div class="adventure-modal-content">
         <div class="adventure-modal-header">
@@ -119,25 +69,7 @@
             <div class="adventure-list-column" hx-get="/ui/list/adventures" hx-trigger="load">
                 <!-- Adventure list will be populated here -->
             </div>
-            {!<div class="adventure-modal-preview-column">!}
-                {!<div id="adventure-modal-preview">!}
-                    {!<!-- Adventure preview will be populated here -->!}
-                {!</div>!}
-            {!</div>!}
+
         </div>
-        {!Deprecated since generic list!}
-        {!<div class="adventure-modal-footer">!}
-            {!<button class="adventure-modal-button create" hx-post="/objects" hx-trigger="click"!}
-                    {!hx-target=".adventure-list-column">!}
-                {!Create New Adventure!}
-            {!</button>!}
-            {!<button class="adventure-modal-button load"!}
-                    {!hx-get="/objects/load"!}
-                    {!hx-vals="js:\{id: document.querySelector('.adventure-list-column .buffer').value \}"!}
-                    {!hx-trigger="click"!}
-                    {!hx-target="body">!}
-                {!Load Adventure!}
-            {!</button>!}
-        {!</div>!}
     </div>
 </div>
