@@ -57,7 +57,7 @@ public class ObjectsResource {
 				case "crewmember" -> {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
 					parent.putCrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
-					return uiResource.getList(parentId, type);
+					return getAdventure(SafeID.fromString(parentId));
 				}
 				case "meal" -> {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
