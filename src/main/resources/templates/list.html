@@ -11,6 +11,7 @@
             buffer.value = '{id}';
             htmx.trigger(buffer, 'valueChanged');
         }
+        {#if type == "meal"}htmx.trigger('#info-container-meal', 'meal-item-clicked', { id: '{id}'});{/if}
         ">
 
         {#switch type}
