@@ -116,9 +116,7 @@
             </div>
             <form id="create-crew-member-form"
                   hx-post="/objects"
-                  hx-vals='{ "type": "{type}", "parentId": "{adventure.id}" }'
-                  hx-target="body"
-                  hx-swap="outerHTML">
+                  hx-vals='{ "type": "{type}", "parentId": "{adventure.id}"}'>
                 <div class="crew-member-form-group">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required>

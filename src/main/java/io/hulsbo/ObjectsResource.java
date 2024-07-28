@@ -57,23 +57,23 @@ public class ObjectsResource {
 				case "crewmember" -> {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
 					parent.putCrewMember(name, Integer.parseInt(age), Integer.parseInt(height), Integer.parseInt(weight), gender, activity, strategy);
-					return getAdventure(SafeID.fromString(parentId));
+					return Response.status(Response.Status.NO_CONTENT).header("HX-Trigger", "evt__crud_crew").build();
 				}
 				case "meal" -> {
 					Adventure parent = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
 					Meal newMeal = new Meal();
 					parent.putChild(newMeal);
-					return uiResource.getList(parentId, type);
+					return Response.status(Response.Status.NO_CONTENT).header("HX-Trigger", "evt__crud_meal").build();
 				}
 				case "ingredient" -> {
 					Meal parent = (Meal) Manager.getBaseClass(SafeID.fromString(parentId));
 					Ingredient newIngredient = new Ingredient();
 					parent.putChild(newIngredient);
-					return uiResource.getList(parentId, type);
+					return Response.status(Response.Status.NO_CONTENT).header("HX-Trigger", "evt__crud_ingredient").build();
 				}
 				case "adventure" -> {
 					new Adventure();
-					return uiResource.getAdventureList();
+					return Response.status(Response.Status.NO_CONTENT).header("HX-Trigger", "evt__crud_adventure").build();
 				}
 				default -> throw new WebApplicationException("Invalid type: " + type, Response.Status.BAD_REQUEST);
 			}
@@ -102,13 +102,18 @@ public class ObjectsResource {
 	@GET
 	@Path("/info")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventureInfo(@QueryParam("id") SafeID id) {
-		Adventure adventure = (Adventure) Manager.getBaseClass(id);
-		if (adventure == null) {
-			throw new WebApplicationException("Adventure not found", Response.Status.NOT_FOUND);
+	public Response getInfoForObject(@QueryParam("id") String id, @QueryParam("type") String type) {
+
+		if (id != null && id.equals("null")) {
+			return Response.status(Response.Status.NO_CONTENT).build();
 		}
-		String renderedHtml = adventureInfoTemplate.data("adventure", adventure).render();
-		return Response.ok(renderedHtml).build();
+
+		BaseClass object = Manager.getBaseClass(SafeID.fromString(id));
+
+		String renderedHtml = adventureDashboard.getFragment("info_object").data("object", object, "type", type).render();
+		String componentInstance = createComponentInstance(renderedHtml, adventureDashboard);
+
+		return Response.ok(componentInstance).build();
 	}
 
 	@PUT
@@ -132,13 +137,17 @@ public class ObjectsResource {
 				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
 			}
 		}
-		String name = new Meal().getClass().getSimpleName();
-		return Response.ok().build();
+		return Response.ok().header("HX-Trigger", "evt__crud_adventure").build();
 	}
 
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public Response getAdventure(@QueryParam("id") SafeID id) {
+	public Response getAdventure(@QueryParam("id") SafeID id, @QueryParam("fragmentId") String fragmentId) {
+
+		if (fragmentId != null && fragmentId.equals("null")) {
+			fragmentId = null;
+		}
+
 		try {
             Adventure adventure = (Adventure) Manager.getBaseClass(id);
 
@@ -149,7 +158,14 @@ public class ObjectsResource {
 			}
 
 			// Render in Qute
-			String renderedHtml = adventureDashboard.data("adventure", adventure ).render();
+			String renderedHtml;
+			if ( fragmentId == null ) {
+				// Render whole dashboard
+				renderedHtml = adventureDashboard.data("adventure", adventure ).render();
+			} else {
+				// Render fragment only
+				renderedHtml = adventureDashboard.getFragment(fragmentId).data("adventure", adventure ).render();
+			}
 
 			// Create component instance
 			String componentInstance = createComponentInstance(renderedHtml, adventureDashboard);
