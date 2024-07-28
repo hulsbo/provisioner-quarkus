@@ -54,7 +54,8 @@ public abstract class BaseClass {
         this.energyDensity = (carbsRatio + proteinRatio) * 4000 + fatRatio * 9000;
     }
 
-    private double getEnergyDensity() {
+    // NOTE: used in template
+    public double getEnergyDensity() {
         return this.energyDensity;
     }
 
