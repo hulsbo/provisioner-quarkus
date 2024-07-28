@@ -351,23 +351,32 @@
 				</div>
 				<div class="section-content">
 					<div>
-						<label for="adventure-info-general">GENERAL</label>
-						<div id="adventure-info-general" class="info-area" hx-get="/api/adventure/info/general"
-							hx-trigger="load">
-							<!-- Adventure general info will be loaded here -->
-						</div>
-					</div>
-					<div>
-						<label for="adventure-info-nutrient">NUTRIENT DATA</label>
-						<div id="adventure-info-nutrient" class="nutrient-area" hx-get="/api/adventure/info/nutrient"
-							hx-trigger="load">
-							<!-- Adventure nutrient info will be loaded here -->
-							<div class="nutrient-item">
-								<div class="nutrient-label">Carbs</div>
-								<div class="nutrient-value"><span class="value">25</span><span class="unit">%</span>
+						<label>GENERAL</label>
+							<div class="general-info">
+								<div>
+									<span>Energy density</span> <span>{adventure.energyDensity} KCal/kg</span>
+								</div>
+								<div>
+									<span>Energy expenditure, Crew:</span><span>{adventure.crewDailyKcalNeed} KCal/day</span>
+								</div>
+								<div>
+									<span>Calc weight:</span> <span>{adventure.weight} kg</span>
 								</div>
 							</div>
-						</div>
+					</div>
+
+					<label>NUTRIENT DATA</label>
+					<div class="nutrient-area">
+
+						{#for nutrient in adventure.nutrientsMap.keys()}
+
+							<div class="nutrient-item">
+								<div class="nutrient-label">{nutrient}</div>
+								<div class="nutrient-value"><span class="value">{adventure.nutrientsMap.get(nutrient)}</span><span class="unit">%</span></div>
+							</div>
+
+						{/for}
+
 					</div>
 				</div>
 			</section>
