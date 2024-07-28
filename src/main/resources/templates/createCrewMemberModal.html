@@ -117,7 +117,7 @@
             <form id="create-crew-member-form"
                   hx-post="/objects"
                   hx-vals='{ "type": "{type}", "parentId": "{adventure.id}" }'
-                  hx-target="closest #{callerId}"
+                  hx-target="body"
                   hx-swap="outerHTML">
                 <div class="crew-member-form-group">
                     <label for="name">Name:</label>
