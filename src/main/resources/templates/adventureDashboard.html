@@ -384,29 +384,76 @@
 				<div class="section-banner">
 					<h2>SELECTED MEAL INFO</h2>
 				</div>
-				<div class="section-content">
-					<div>
-						<label for="meal-info-general">GENERAL</label>
-						<div id="meal-info-general" class="info-area" hx-get="stub" hx-trigger="load">
-							<!-- Meal general info will be loaded here -->
-						</div>
-					</div>
-					<div>
-						<label for="meal-info-nutrient">NUTRIENT DATA</label>
-						<div id="meal-info-nutrient" class="nutrient-area" hx-get="/api/meal/info/nutrient"
-							hx-trigger="load">
-							<!-- Meal nutrient info will be loaded here -->
-							<div class="nutrient-item">
-								<div class="nutrient-label">Carbs</div>
-								<div class="nutrient-value"><span class="value">25</span><span class="unit">%</span>
-								</div>
-							</div>
-						</div>
-					</div>
+				<div class="section-content"
+					 hx-get="/objects/info/nutrients/"
+					 hx-vals='js:{ id: event.detail.id}'
+					 hx-trigger="meal-item-clicked"
+					 id="info-container-meal">
 				</div>
 			</section>
 		</main>
 	</div>
 </body>
 
-</html>
+{#fragment id=nutrient_map_object rendered=false}
+	<style>
+		.general-info div {
+			display: flex;
+			justify-content: space-between;
+			line-height: 2;
+		}
+		.nutrient-area {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(3, 1fr);
+			grid-auto-flow: column;
+			gap: 5px;
+		}
+		.nutrient-item {
+			display: flex;
+			flex-direction: row;
+			padding: 10px 50px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			justify-content: space-between;
+		}
+
+		.nutrient-label {
+			font-size: 1em;
+			color: #666;
+			margin: 0px 10px 0px 0px
+		}
+
+
+		.nutrient-value {
+			font-size: 1em;
+			font-weight: bold;
+			color: #333;
+		}
+	</style>
+	<div class="general-info">
+		{#if object != null}
+		<label>GENERAL</label>
+		<div>
+			<span>Avg. E. density:</span> <span>{object.energyDensity} KCal/kg</span>
+		</div>
+		<div>
+			<span>Calc weight:</span> <span>{object.weight} kg</span>
+		</div>
+	</div>
+	<label>NUTRIENT DATA</label>
+	<div class="nutrient-area">
+
+			{#for nutrient in object.nutrientsMap.keys()}
+				<div class="nutrient-item">
+					<div class="nutrient-label">{nutrient}</div>
+					<div class="nutrient-value"><span class="value">{object.nutrientsMap.get(nutrient)}</span><span class="unit">%</span></div>
+				</div>
+			{/for}
+		{#else}
+			<p>Click a {type} to get information about it.</p>
+		{/if}
+	</div>
+
+
+{/fragment}
