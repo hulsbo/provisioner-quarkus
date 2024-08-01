@@ -10,31 +10,43 @@ public SafeID putChild(Ingredient newIngredient) {
 }
 
     /**
-     * @param id id of ingredient
-     * @param weight absolute weight in grams of ingredient
+     * <p>This function does three things:</p>
+     * <ol>
+     *      <li>
+     *        Modifies the absWeight (grams) of an ingredient.
+     *      </li>
+     *      <li>
+     *        Recalculate totalAbsWeight of all the ingredients.
+     *      </li>
+     *      <li>
+     *        Reassess the ratios based on the new totalAbsWeight.
+     *      </li>
+     * </ol>
+     * @param id The SafeId, used as key in the childMap, for the ingredient to be modified
+     * @param absWeight the new absWeight (grams) for the ingredient
      */
-    public void modifyWeightOfIngredient(SafeID id, double weight) {
+    public void modifyWeightOfIngredient(SafeID id, double absWeight) {
         if (childMap.get(id) == null) {
             throw new IllegalArgumentException("No Ingredient with such name exist.");
         }
-        if (weight == 0) {
-            throw new IllegalArgumentException("The weight cannot be 0.");
+        if (absWeight == 0) {
+            throw new IllegalArgumentException("The absWeight cannot be 0.");
         }
 
-        childMap.get(id).setRecipeWeight(weight);
+        childMap.get(id).setRecipeWeight(absWeight);
 
         // Calculate the current total weight
-        double totalWeight = 0.0;
+        double totalAbsWeight = 0.0;
 
         Set<SafeID> keys = childMap.keySet();
 
         for (SafeID key : keys) {
-            totalWeight += childMap.get(key).getRecipeWeight();
+            totalAbsWeight += childMap.get(key).getRecipeWeight();
         }
 
         // update all ratios
         for (SafeID key : keys) {
-            double weightedValue = childMap.get(key).getRecipeWeight() / totalWeight;
+            double weightedValue = childMap.get(key).getRecipeWeight() / totalAbsWeight;
             modifyRatio(key, weightedValue);
         }
 
