@@ -26,6 +26,10 @@ public class UiResource {
     @Location("createCrewMemberModal.html")
     Template createCrewMemberModal;
 
+    @Inject
+    @Location("modifyMealModal.html")
+    Template modifyMealModal;
+
     @GET
     @Path("/clear")
     @Produces(MediaType.TEXT_HTML)
@@ -34,22 +38,66 @@ public class UiResource {
     }
 
     @GET
-    @Path("/modal/crew-member-form")
+    @Path("/modal")
     @Produces(MediaType.TEXT_HTML)
-    public Response openCreateCrewMemberModal(
-            @QueryParam("parentId") String parentId,
+    public Response openModal(
+            @QueryParam("id") String id,
             @QueryParam("type") String type,
+            @QueryParam("parentId") String parentId,
             @QueryParam("callerId") String callerId
     ) {
 
-        // Get parent
-        Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+        Template someTemplate = null;
+        String renderedHtml = "";
 
-        // Render in Qute
-        String renderedHtml = createCrewMemberModal.data("adventure", adventure, "type", type, "callerId", callerId ).render();
+        try {
+            switch (type) {
+                case "crewmember" -> {
+                    someTemplate = createCrewMemberModal;
 
+                    // Get parent
+                    Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+
+                    // Render in Qute
+                    renderedHtml = someTemplate.data("adventure", adventure, "type", type, "callerId", callerId).render();
+                }
+                case "meal" -> {
+                    someTemplate = modifyMealModal;
+
+                    // Get parent
+                    Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(parentId));
+
+                    // Get meal
+                    Meal meal = (Meal) Manager.getBaseClass(SafeID.fromString(id));
+
+                    // Render in Qute
+                    renderedHtml = someTemplate.data("adventure", adventure, "meal", meal, "type", type, "callerId", callerId).render();
+                }
+            }
+        } catch (ClassCastException e) {
+            throw new WebApplicationException("Cast operation failed for " + type, Response.Status.BAD_REQUEST);
+        }
+
+        assert someTemplate != null;
         // Create component instance
-        String componentInstance = createComponentInstance(renderedHtml, createCrewMemberModal);
+        String componentInstance = createComponentInstance(renderedHtml, someTemplate);
+
+        return Response.ok(componentInstance).build();
+    }
+
+    @GET
+    @Path("/modal/ingredient")
+    @Produces(MediaType.TEXT_HTML)
+    public Response getIngredientDetails(@QueryParam("id") String id, @QueryParam("type") String type) {
+
+        if (id != null && id.equals("null")) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        Ingredient ingredient = (Ingredient) Manager.getBaseClass(SafeID.fromString(id));
+
+        String renderedHtml = modifyMealModal.getFragment("ingredientDetails").data("ingredient", ingredient, "type", type).render();
+        String componentInstance = createComponentInstance(renderedHtml, modifyMealModal);
 
         return Response.ok(componentInstance).build();
     }
@@ -116,7 +164,7 @@ public class UiResource {
 
                 items = ((Adventure) parent).getAllCrewMembers();
                 actions = Map.of(
-                        "add", "ui/modal/crew-member-form",
+                        "add", "ui/modal",
                         "remove", "/objects/"
                 );
                 break;
@@ -129,7 +177,7 @@ public class UiResource {
                 items = parent.getAllChildren();
                 actions = Map.of(
                         "add", "/objects/",
-                        "edit", "/objects/",
+                        "edit", "ui/modal",
                         "remove", "/objects/"
                 );
                 break;

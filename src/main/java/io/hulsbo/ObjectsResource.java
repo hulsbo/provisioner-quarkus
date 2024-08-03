@@ -140,6 +140,45 @@ public class ObjectsResource {
 		return Response.ok().header("HX-Trigger", "evt__crud_adventure").build();
 	}
 
+	@PUT
+	@Path("/ingredient/{id}/input")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response putIngredient(MultivaluedMap<String, String> multivaluedFormParams, @PathParam("id") SafeID id) {
+
+		Map<String, String> formParams = new HashMap<>();
+
+		for (String key : multivaluedFormParams.keySet()) {
+			formParams.put(key, multivaluedFormParams.getFirst(key));
+		}
+
+		Ingredient ingredient = (Ingredient) Manager.getBaseClass(id);
+
+		if (ingredient == null) {
+			throw new WebApplicationException("Ingredient not found", Response.Status.NOT_FOUND);
+		}
+
+		for (Map.Entry<String, String> entry : formParams.entrySet()) {
+			String key = entry.getKey();
+
+			if (key.equals("name")) {
+				ingredient.setName(entry.getValue());
+			} else {
+				double value = Integer.parseInt(entry.getValue());
+				switch (key) {
+					case "carbs" -> ingredient.modifyNutrient("carbs", value);
+					case "protein" -> ingredient.modifyNutrient("protein", value);
+					case "fat" -> ingredient.modifyNutrient("fat", value);
+					case "water" -> ingredient.modifyNutrient("water", value);
+					case "fiber" -> ingredient.modifyNutrient("fiber", value);
+					case "salt" -> ingredient.modifyNutrient("salt", value);
+					// Add more cases as needed
+					default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
+				}
+			}
+		}
+		return Response.ok().header("HX-Trigger", "evt__crud_ingredient").build();
+	}
+
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response getAdventure(@QueryParam("id") SafeID id, @QueryParam("fragmentId") String fragmentId) {

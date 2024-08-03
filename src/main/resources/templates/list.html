@@ -12,6 +12,7 @@
             htmx.trigger(buffer, 'valueChanged');
         }
         {#if type == "meal"}htmx.trigger('#info-container-meal', 'meal-item-clicked', { id: '{id}'});{/if}
+         {#if type == "ingredient"}htmx.trigger('#info-container-ingredient', 'ingredient-item-clicked', { id: '{id}'});{/if}
         ">
 
         {#switch type}
@@ -255,10 +256,13 @@
             </button>
             {/if}
             {#if actions.get("edit")}
-            <button class="action-button edit-btn"
+            <button class="action-button edit-btn preserveFocusedClass"
                     hx-get="{actions.get("edit")}"
                     hx-target="{type.equals('adventure') ? 'body' : '#__lid_modal__'}"
-                    hx-vals='js:{ id: document.querySelector(".focused").getAttribute("id") }'>
+                    hx-vals='js:{
+                        callerId: "__lid_list__", type: "{type}",
+                        id: document.querySelector(".focused").getAttribute("id"),
+                        parentId: "{parent.id ?: "null"}" }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>
             </button>
             {/if}
