@@ -1,9 +1,6 @@
 package io.hulsbo.util.model.baseclass;
 
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NutrientsMap extends AbstractMap<String, Double> {
     private final Map<String, Double> nutrientsMap = new LinkedHashMap<>();
@@ -24,6 +21,24 @@ public class NutrientsMap extends AbstractMap<String, Double> {
 
     @Override
     public Double put(String key, Double value) {
+// TODO: Finish implementation below where put only adapts if > 100 ratio is achieved.
+//  If < 100 the rest should be unallocated, and this unallocated space communicated to front-end
+//  so user knows at input of ratio how much space is available.
+
+//        // Calculating the sum
+//        Collection<Double> values = nutrientsMap.values();
+//        double sum = 0.0;
+//
+//        for (Double v : values) {
+//            sum = sum + v;
+//        }
+//
+//        double oldValue = nutrientsMap.get(key);
+//
+//        if (sum - oldValue + value > 100.0) {
+//            System.out.println("The ratio sum exceeded 100.0, shrinking all to be equal to 100.");
+//
+//        }
         if (nutrientsMap.containsKey(key)) {
             nutrientsMap.put(key, value);
         } else {

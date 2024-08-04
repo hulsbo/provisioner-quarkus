@@ -5,10 +5,16 @@ import io.hulsbo.util.model.SafeID;
 
 public class Meal extends BaseClass {
 
-public SafeID putChild(Ingredient newIngredient) {
+    /**
+     * Add a new ingredient to the meal
+     * @param newIngredient the new ingredient to add
+     * @return
+     */
+    public SafeID putChild(Ingredient newIngredient) {
     return super.putChild(newIngredient, 0.0, 0.0);
 }
 
+    // TODO: Implement in appropriate resource method for /objects/meal
     /**
      * <p>This function does three things:</p>
      * <ol>
@@ -16,16 +22,16 @@ public SafeID putChild(Ingredient newIngredient) {
      *        Modifies the absWeight (grams) of an ingredient.
      *      </li>
      *      <li>
-     *        Recalculate totalAbsWeight of all the ingredients.
+     *        Recalculates totalAbsWeight of all the ingredients.
      *      </li>
      *      <li>
-     *        Reassess the ratios based on the new totalAbsWeight.
+     *        Reassesses the ratios based on the new totalAbsWeight.
      *      </li>
      * </ol>
      * @param id The SafeId, used as key in the childMap, for the ingredient to be modified
      * @param absWeight the new absWeight (grams) for the ingredient
      */
-    public void modifyWeightOfIngredient(SafeID id, double absWeight) {
+    public void modifyAbsWeightOfIngredient(SafeID id, double absWeight) {
         if (childMap.get(id) == null) {
             throw new IllegalArgumentException("No Ingredient with such name exist.");
         }
