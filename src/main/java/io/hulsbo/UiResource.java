@@ -1,8 +1,5 @@
 package io.hulsbo;
-import io.hulsbo.model.Adventure;
-import io.hulsbo.model.BaseClass;
-import io.hulsbo.model.Manager;
-import io.hulsbo.model.Meal;
+import io.hulsbo.model.*;
 import io.hulsbo.util.model.SafeID;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
