@@ -117,9 +117,9 @@ public class ObjectsResource {
 	}
 
 	@PUT
-	@Path("/{id}/input")
+	@Path("/adventure/{id}/input")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response putName(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
+	public Response putAdventure(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
 
 		Adventure adventure = (Adventure) Manager.getBaseClass(id);
 		if (adventure == null) {
@@ -138,6 +138,30 @@ public class ObjectsResource {
 			}
 		}
 		return Response.ok().header("HX-Trigger", "evt__crud_adventure").build();
+	}
+
+	@PUT
+	@Path("/meal/{id}/input")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response putMeal(MultivaluedMap<String, String> formParams, @PathParam("id") SafeID id) {
+
+		Meal meal = (Meal) Manager.getBaseClass(id);
+
+		if (meal == null) {
+			throw new WebApplicationException("Meal not found", Response.Status.NOT_FOUND);
+		}
+
+		for (Map.Entry<String, List<String>> entry : formParams.entrySet()) {
+			String key = entry.getKey();
+			String singleValue = entry.getValue().get(0);  // Assuming single value
+
+			switch (key) {
+				case "name" -> meal.setName(singleValue);
+				// Add more cases as needed
+				default -> throw new IllegalArgumentException("Unexpected form parameter: " + key);
+			}
+		}
+		return Response.ok().header("HX-Trigger", "evt__crud_meal").build();
 	}
 
 	@PUT

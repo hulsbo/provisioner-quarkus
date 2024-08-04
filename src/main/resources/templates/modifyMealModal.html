@@ -164,7 +164,7 @@
 
         <div class="header">
             <h2 class="header-title">MEAL<input name="name" type="text" value="{meal.name}" title="Click to modify the name."
-                           placeholder="Enter meal name" autocomplete="off" hx-put="/objects/{meal.id}/input"
+                           placeholder="Enter meal name" autocomplete="off" hx-put="/objects/meal/{meal.id}/input"
                            hx-trigger="blur changed, keyup[key == 'Enter'] changed"></h2>
             <button class="close"
                     hx-on--before-request="htmx.remove(htmx.find('#crew-member-form')); event.preventDefault();"
