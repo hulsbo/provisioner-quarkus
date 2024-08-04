@@ -70,13 +70,11 @@
     <!-- ingredient -->
     {#fragment id=headersIngredient rendered=false}
         <div class="column-header">name</div>
-        <div class="column-header">weight</div>
-        <div class="column-header">KCal/Kg</div>
+        <div class="column-header">ratio</div>
     {/fragment}
     {#fragment id=columnsIngredient rendered=false}
         <div class="column-value">{item.name}</div>
-        <div class="column-value">{parent.getChildWeights().get(item.id)}kg</div>
-        <div class="column-value">{item.FormattedEnergyDensity}</div>
+        <div class="column-value">{parent.getChildMap().get(item.id).getRatio()}%</div>
     {/fragment}
 
 
@@ -260,7 +258,8 @@
                     hx-get="{actions.get("edit")}"
                     hx-target="{type.equals('adventure') ? 'body' : '#__lid_modal__'}"
                     hx-vals='js:{
-                        callerId: "__lid_list__", type: "{type}",
+                        callerId: "__lid_list__",
+                        type: "{type}",
                         id: document.querySelector(".focused").getAttribute("id"),
                         parentId: "{parent.id ?: "null"}" }'>
                 <img width="22" height="22" class="icon" src="/icons/edit.svg" alt="Edit"/>

@@ -190,7 +190,6 @@ public class UiResource {
                 items = parent.getAllChildren();
                 actions = Map.of(
                         "add", "/objects/",
-                        "edit", "/objects/",
                         "remove", "/objects/"
                 );
                 break;

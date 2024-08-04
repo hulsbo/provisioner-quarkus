@@ -180,11 +180,11 @@
             <div class="column-right">
 
                 <div class="section-content"
-                     hx-get="/objects/info/"
+                     hx-get="/ui/modal/ingredient"
                      hx-vals='js:{ id: event.detail.id, type: "ingredient"}'
                      hx-trigger="ingredient-item-clicked"
                      id="info-container-ingredient">
-                    <p>Select an ingredient to get details about it.</p>
+                    <p>Select an ingredient to modify it.</p>
                 </div>
 
                 {#fragment id = ingredientDetails rendered = false}
@@ -192,45 +192,47 @@
                 <div class="section-banner">
                     <h2>INGREDIENT<input name="name" type="text" value="{ingredient.name}" id="ingredient-name"
                                          placeholder="Enter ingredient name" autocomplete="off"
-                                         hx-put="/objects/{ingredient.id}/input"
-                                         hx-trigger="blur changed, keyup[key == 'Enter'] changed"></h2>
+                                         hx-put="objects/ingredient/{ingredient.id}/input"
+                                         hx-trigger="blur changed, keyup[key == 'Enter'] changed"
+
+                        ></h2>
                 </div>
                 <div class="section-content ingredient-details">
 
                     <div class="nutrient-input">
                         <label for="carbs">CARBS</label>
-                        <input name="carbs" type="number" id="carbs-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="carbs" type="number" id="carbs-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;">
 
                     </div>
                     <div class="nutrient-input">
                         <label for="protein">PROTEIN</label>
-                        <input name="protein" type="number" id="protein-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="protein" type="number" id="protein-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;">
                     </div>
                     <div class="nutrient-input">
                         <label for="fat">FAT</label>
-                        <input name="fat" type="number" id="fat-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="fat" type="number" id="fat-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;">
                     </div>
                     <div class="nutrient-input">
                         <label for="water">WATER</label>
-                        <input name="water" type="number" id="water-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="water" type="number" id="water-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;" value="">
                     </div>
                     <div class="nutrient-input">
                         <label for="fiber">FIBER</label>
-                        <input name="fiber" type="number" id="fiber-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="fiber" type="number" id="fiber-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;">
                     </div>
                     <div class="nutrient-input">
                         <label for="salt">SALT</label>
-                        <input name="salt" type="number" id="salt-input" hx-put="/objects/{ingredient.id}/input"
+                        <input name="salt" type="number" id="salt-input" hx-put="/objects/ingredient/{ingredient.id}/input"
                                hx-trigger="blur changed, keyup[key == 'Enter'] changed"
                                hx-on-input="if (this.value < 1) this.value = 1;">
                     </div>
