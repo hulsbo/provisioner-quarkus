@@ -202,7 +202,7 @@
 
                 {#fragment id = ingredientDetails rendered = false}
 
-                <div class="section-banner">
+                <div class="section-banner" hx-params="not id, type">
                     <h2>INGREDIENT<input name="name" type="text" value="{ingredient.name}" id="ingredient-name"
                                          placeholder="Enter ingredient name" autocomplete="off"
                                          hx-put="objects/ingredient/{ingredient.id}/input"
@@ -210,7 +210,7 @@
 
                         ></h2>
                 </div>
-                <div class="section-content ingredient-details">
+                <div class="section-content ingredient-details" hx-params="not id, type">
 
                     <div class="nutrient-input">
                         <label for="carbs">CARBS</label>
