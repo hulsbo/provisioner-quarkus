@@ -5,11 +5,12 @@ import io.hulsbo.util.model.CrewMember.KCalCalculationStrategies.KCalCalculation
 import io.hulsbo.util.model.CrewMember.PhysicalActivity;
 import io.hulsbo.util.model.SafeID;
 import io.hulsbo.util.model.baseclass.ChildWrapper;
+import io.quarkus.logging.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Adventure extends BaseClass {
+public class Adventure extends BaseClass  {
 	private final Map<SafeID, CrewMember> crewMemberMap = new LinkedHashMap<>();
 	private double crewDailyKcalNeed;
 	private int days;
@@ -33,6 +34,8 @@ public class Adventure extends BaseClass {
 
 	public void setMealAndIngredientWeights() {
 
+		Log.info("setMealAndIngredientWeights run");
+
 		ingredientWeights.clear();
 
 		setChildWeights(); // Ingredient weights depends on an updated childWeights field.
@@ -42,21 +45,33 @@ public class Adventure extends BaseClass {
 		for (SafeID mealKey : mealKeys) { // For each meal, calculate its child ingredients weights and save in
 											// ingredientWeights.
 
+			Log.info("Meal");
+
 			Map<SafeID, ChildWrapper> mealIngredients = childMap.get(mealKey).getChild().childMap;
 
 			Set<SafeID> ingredientKeys = mealIngredients.keySet();
 
 			for (SafeID ingredientKey : ingredientKeys) {
+				Log.info("Ingredient");
+				Log.info("key: " + ingredientKey);
+				Log.info("mealweight: " + childWeights.get(mealKey));
+				Log.info("ratio ingred: " + mealIngredients.get(ingredientKey).getRatio());
 				// NOTE: Since there's no direct connection to this object and the ingredient,
 				// we use the id of the ingredient itself.
 				ingredientWeights.put(ingredientKey,
 						childWeights.get(mealKey) * mealIngredients.get(ingredientKey).getRatio());
+
+			if (!ingredientWeights.containsKey(ingredientKey)) {
+				throw new IllegalArgumentException("Ingredient weight with key " + ingredientKey + " could not be added to ingredientWeights.");
+			} else {
+				Log.info("Ingredient weight with key " + ingredientKey + " was successfully added to ingredientWeights, with weight: " + ingredientWeights.get(ingredientKey));
+			}
 			}
 		}
 	}
 
-	public void setNutrientsMap() {
-		super.setNutrientsMap();
+	public void setNutrientsMapAndWeights() {
+		super.setNutrientsMapAndWeights();
 		setCrewDailyKcalNeed();
 		setMealAndIngredientWeights();
 	}
@@ -77,6 +92,9 @@ public class Adventure extends BaseClass {
 		crewMemberMap.put(newCrewMember.getId(), newCrewMember);
 		// NOTE: Registration in Manager is done in constructor.
 		setCrewDailyKcalNeed();
+
+		// Trigger update propagation
+		this.updateAndPropagate();
 	}
 
 	public void setCrewDailyKcalNeed() {
@@ -94,6 +112,9 @@ public class Adventure extends BaseClass {
 		} else {
 			throw new IllegalArgumentException("Days must be one or more.");
 		}
+
+		// Trigger update propagation
+		this.updateAndPropagate();
 	}
 
 	public int getDays() {
@@ -110,9 +131,9 @@ public class Adventure extends BaseClass {
 			System.out.println();
 			System.out.printf("%25s %s %n", "Crew member " + i + ":", crewMember.getName());
 			System.out.printf("%25s %s %n", "Gender:", crewMember.getGender().toString().toLowerCase());
-			System.out.printf("%25s %s %n", "Age:", crewMember.getAge());
+			System.out.printf("%25s %d %n", "Age:", crewMember.getAge());
 			System.out.printf("%25s %s %n", "Activity level:", crewMember.getActivity().toString().toLowerCase());
-			System.out.printf("%25s %.0f KCal %n", "Daily KCal need:", crewMember.getDailyKCalNeed());
+			System.out.printf("%25s %d KCal %n", "Daily KCal need:", crewMember.getDailyKCalNeed());
 
 			i++;
 		}
@@ -121,7 +142,7 @@ public class Adventure extends BaseClass {
 
 		System.out.println();
 
-		System.out.printf("Meals for %d days:".toUpperCase(), days);
+		System.out.println("MEALS FOR " + days + " DAYS:");
 		System.out.println();
 		System.out.println();
 		childMap.forEach((key, value) -> {
@@ -210,8 +231,34 @@ public class Adventure extends BaseClass {
 		return String.format("%.1f", ratio * 100);
 	}
 
-	public String removeCrewMember(SafeID id) {
+	// NOTE: Used in template.
+	public Map<SafeID, Double> getIngredientWeights() {
+		return ingredientWeights;
+	}
+
+	public void removeCrewMember(SafeID id) {
 		crewMemberMap.remove(id);
-		return Manager.removeCrewMember(id);
+		if (crewMemberMap.containsKey(id)) {
+			throw new IllegalArgumentException("Crew member with id " + id + " could not be removed from adventure.");
+		} else {
+			Log.info("Crew member with id " + id + " was successfully removed from adventure.");
+		}
+
+		// Trigger update propagation
+		this.updateAndPropagate();
+	}
+
+	// Override updateAndPropagate
+	@Override
+	protected void updateAndPropagate() {
+		Log.info("Update and propagate run");
+		// 1. Perform Adventure-specific recalculations *first*
+		this.updateNameIndex(); // Ensure name index is up-to-date
+		// Note: setCrewDailyKcalNeed is implicitly called by put/remove crew member before this
+		// Note: setWeight is implicitly called by setNutrientsMapAndWeights
+		this.setNutrientsMapAndWeights(); // Updates energyDensity, mealWeights, ingredientWeights based on children
+
+		// 2. Then, call the base implementation to propagate upwards (if Adventures could be children)
+		super.updateAndPropagate();
 	}
 }

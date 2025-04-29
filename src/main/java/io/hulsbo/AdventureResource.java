@@ -24,6 +24,13 @@ public class AdventureResource {
 		return Response.ok(adventure).build();
 	}
 
+	@DELETE
+	@Path("/{id}")
+	public Response removeAdventure(@PathParam("id") String id) {
+		Manager.removeBaseClassObject(SafeID.fromString(id));
+		return Response.ok().build();
+	}
+
 	@GET
 	public Response getAllAdventures() {
 		List<Adventure> adventures = Manager.getAllAdventures();
@@ -40,6 +47,7 @@ public class AdventureResource {
 		return Response.ok(adventure).build();
 	}
 
+	// NOTE: Crewmembers are not added to the index currently.
 	@POST
 	@Path("/{id}/crew")
 	public Response addCrewMember(
@@ -56,9 +64,21 @@ public class AdventureResource {
 		if (adventure == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
-
 		adventure.putCrewMember(name, age, height, weight, gender, activity, strategy);
 		return Response.ok(adventure).build();
+	}
+
+	@DELETE
+	@Path("/{adventureId}/crew/{crewId}")
+	public Response removeCrewMember(
+		@PathParam("adventureId") String adventureId,
+		@PathParam("crewId") String crewId) {
+		Adventure adventure = (Adventure) Manager.getBaseClass(SafeID.fromString(adventureId));
+		if (adventure == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		adventure.removeCrewMember(SafeID.fromString(crewId));
+		return Response.ok().build();
 	}
 
 	@PUT
@@ -93,6 +113,25 @@ public class AdventureResource {
 		return Response.ok(mealId).build();
 	}
 
+	@DELETE
+	@Path("/{id}/meals/{mealId}")
+	public Response removeMeal(
+			@PathParam("id") SafeID adventureId,
+			@PathParam("mealId") SafeID mealId) {
+
+		Adventure adventure = (Adventure) Manager.getBaseClass(adventureId);
+		if (adventure == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		try {
+			adventure.removeChild(mealId);
+			return Response.ok().build();
+		} catch (IllegalArgumentException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+		}
+	}
+
 	@GET
 	@Path("/{id}/info")
 	public Response getAdventureInfo(@PathParam("id") SafeID id) {
@@ -104,4 +143,5 @@ public class AdventureResource {
 		adventure.getInfo();
 		return Response.ok("Adventure info printed to console").build();
 	}
+
 }
